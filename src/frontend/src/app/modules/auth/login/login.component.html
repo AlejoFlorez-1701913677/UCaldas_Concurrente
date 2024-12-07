@@ -1,1 +1,16 @@
-<p>login works!</p>
+<div class="login-container">
+    <h2>Inicio Sesión</h2>
+    <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
+      <label for="email">Correo electrónico</label>
+      <input id="email" type="email" formControlName="email" placeholder="Ingrese su correo" />
+  
+      <label for="password">Llave de acceso</label>
+      <input id="password" type="password" formControlName="password" placeholder="Ingrese su contraseña" />
+  
+      <button type="submit" [disabled]="!loginForm.valid">Iniciar Sesión</button>
+    </form>
+    <div class="links">
+      <a routerLink="/forgot-password">Olvidé mi contraseña</a>
+      <a routerLink="/register">Registrar</a>
+    </div>
+  </div>
