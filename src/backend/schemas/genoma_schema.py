@@ -2,9 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Dict, Optional
 from bson import ObjectId
 
-
 # Helper para manejar el ObjectId de MongoDB con pydantic
-
 
 # Modelo base para las entradas VCF
 class VCFEntryBase(BaseModel):

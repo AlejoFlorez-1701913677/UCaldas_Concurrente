@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from database.mongo import Database
 from routes.file_route import router
+from routes.user_route import routerUser
 from config.setting import settings
 
 # Configuración de CORS
@@ -21,16 +22,13 @@ origins = [
     # Agrega aquí otros orígenes permitidos
 ]
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Database.connect()
     yield
     Database.close()
 
-
 app = FastAPI(lifespan=lifespan)
-
 
 app = FastAPI(lifespan=lifespan)
 app.router.lifespan_context = lifespan
@@ -42,9 +40,9 @@ app.add_middleware(
     allow_headers=["*"],  # Permitir todos los encabezados
 )
 
-
 # Registrar las rutas
 app.include_router(router, prefix="/genoma", tags=["file_upload"])
+app.include_router(routerUser, prefix="/User", tags=["user"])
 
 
 # Manejo de la interrupción (Ctrl+C)
@@ -56,7 +54,6 @@ def handle_interrupt(signal, frame):
 
 # Vincula la señal de interrupción (Ctrl+C) con el manejador
 signal.signal(signal.SIGINT, handle_interrupt)
-
 
 @app.get("/")
 async def root():

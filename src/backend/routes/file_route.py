@@ -4,16 +4,9 @@ import tempfile
 from database.mongo import Database
 from services.genoma_service import GenomeProcessorService
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from pydantic import BaseModel
+from response.process_file_response import ProcessFileResponse
 
 router = APIRouter()
-
-
-class ProcessFileResponse(BaseModel):
-    message: str
-    files_processed: int
-    total_time: float
-
 
 # Define the response model
 @router.post("/process_file", response_model=ProcessFileResponse)
@@ -86,5 +79,5 @@ async def process_file(
 
 @router.get("/create")
 async def main(db: AsyncIOMotorDatabase = Depends(Database.get_db)):
-    await db["books"].insert_one({"hello": "world"})
+    await db["books"].insert_one({"Config": "Success"})
     return "Done"
