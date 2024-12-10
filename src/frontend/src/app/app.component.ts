@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Router} from '@angular/router';
+import { Router } from '@angular/router';
+import { FileUploadService } from './services/file-upload.service';
 
 @Component({
   selector: 'app-root',
@@ -8,9 +9,11 @@ import { Router} from '@angular/router';
 })
 export class AppComponent {
   title = 'Proyecto Concurrente';
-  constructor(private router: Router){}
+  fileContent: string | null = null; // Variable para almacenar el contenido del archivo
 
-  isLoginPage(): boolean{
+  constructor(private router: Router, private fileUploadService: FileUploadService) {}
+
+  isLoginPage(): boolean {
     return this.router.url === '/login';
   }
 
@@ -18,5 +21,8 @@ export class AppComponent {
     // Simulación de autenticación: verifica si hay un token almacenado
     return !!localStorage.getItem('token');
   }
-  
+
+  onFileLoaded(content: string): void {
+    this.fileContent = content; // Almacena el contenido del archivo
+  }
 }

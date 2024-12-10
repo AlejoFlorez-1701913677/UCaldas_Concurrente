@@ -1,124 +1,72 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { stepRound } from 'src/app/services/stepRound';
-import { Edge, Graph, GraphComponent, Layout } from '@swimlane/ngx-graph';
-import { DagreNodesOnlyLayout } from 'src/app/services/layout,service';
-import { FlowChartService } from 'src/app/services/flow-chart.service';
-import * as shape from 'd3-shape';
-import { startWith } from 'rxjs/operators';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { FileUploadService } from 'src/app/services/file-upload.service';
+
 @Component({
   selector: 'app-vista-grafo',
   templateUrl: './vista-grafo.component.html',
-  styleUrls: ['./vista-grafo.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./vista-grafo.component.css']
 })
-export class VistaGrafoComponent implements OnInit{
-  @ViewChild('graphContainer')
-  child!: GraphComponent;
-  dimensions: [number, number] = [0, 0];
-  showRender: boolean = false;
-  dataNode: Array<any> = [] //TODO--> tarjetas
-  dataLink: Array<any> = [] //TODO: ---> lineas verdes
 
+export class VistaGrafoComponent implements OnChanges {
+  @Input() fileContent: string | null = null;  // Contenido del archivo recibido
+  tableData: Array<Record<string, string>> = [];
+  columns: string[] = [];
 
-  curve= stepRound;
+  constructor(private fileUploadService: FileUploadService) {} // Inyectamos el servicio
 
-  public layoutSettings = {
-    orientation: 'LR' //TODO: Top-to-bottom  --> Left to Right
-  };
-  public layout: Layout = new DagreNodesOnlyLayout();
-
-  constructor(private flowChartService: FlowChartService, private cd: ChangeDetectorRef) { }
-  
-  ngOnInit(): void {
-    this.flowChartService.zoneDimensions$.subscribe(([w, h]) => {
-      if ((w) && (h)) {
-        this.dimensions = [w, h]
-        this.showRender = true;
-
-        this.cd.detectChanges()
-        this.callAfterLoad()
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['fileContent'] && this.fileContent) {
+      if (this.isJsonFile(this.fileContent)) {
+        this.parseJsonFile(this.fileContent);
+        console.log('Datos JSON:', this.tableData);
+        console.log(this.fileContent)
+      } else {
+        this.parseVcfFile(this.fileContent);
       }
-    })
+    }
+  }
 
-    this.flowChartService.data$.pipe(
-      startWith({ nodes: [], links: [] }) // Emitir un valor inicial vacío si es necesario
-    ).subscribe(data => {
-      if (data) {
-        this.dataNode = [data]; //TODO 1 valor!
-      }
-    });
+  isJsonFile(content: string): boolean {
+    try {
+      JSON.parse(content);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
-    this.flowChartService.dataChild$.pipe(
-      startWith({ nodes: [], links: [] }) // Emitir un valor inicial vacío si es necesario
-    ).subscribe(data => {
-      if (data) {
-        this.dataNode = [...this.dataNode, ...data.nodes];
-        this.dataLink = [...this.dataLink, ...data.links];
-        console.log('data childs', data);
-      }
-    });
+  parseJsonFile(content: string): void {
+    const jsonData = JSON.parse(content);
+    if (Array.isArray(jsonData) && jsonData.length > 0) {
+      this.columns = Object.keys(jsonData[0]);
+      this.tableData = jsonData;
+    } else {
+      console.error('El archivo JSON no tiene el formato esperado');
+    }
+  }
 
-    this.flowChartService.dataYoutubers$.pipe(
-      startWith({ nodes: [], links: [] }) // Emitir un valor inicial vacío si es necesario
-    ).subscribe(data => {
-      console.log('....', data);
-
-      if (data) {
-        this.dataNode = [...this.dataNode, ...data.nodes];
-        this.dataLink = [...this.dataLink, ...data.links];
-        console.log('data youtubers', data);
-      }
+  parseVcfFile(content: string): void {
+    const lines = content.split('\n');
+    this.columns = lines[0].split('\t'); // Asume que los encabezados están en la primera línea y separados por tabulaciones
+    this.tableData = lines.slice(1).map(line => {
+      const values = line.split('\t');
+      const row: Record<string, string> = {};
+      this.columns.forEach((col, index) => {
+        row[col] = values[index] || '';
+      });
+      return row;
     });
   }
 
-  callAfterLoad(): void {
-
-    /* Recalculate Positions of endpoints while moving / dragging, added i as an identifier that it was moved */
-
-    // tslint:disable-next-line:only-arrow-functions
-    (this.child.layout as Layout).updateEdge = function (graph: Graph, edge: Edge): Graph {
-
-      const sourceNode: any = graph.nodes.find(n => n.id === edge.source);
-      const targetNode: any = graph.nodes.find(n => n.id === edge.target);
-
-      // centered so i do not bother if its up oder downwards bot -1
-      const dir = sourceNode.position.y <= targetNode.position.y ? -1 : -1;
-      // Compute positions while dragging here
-      const startingPoint = {
-        x: sourceNode.position.x - dir * (sourceNode.dimension.height / 2) - 50,
-        i: true,
-        y: sourceNode.position.y,
-
-      };
-      const endingPoint = {
-        x: targetNode.position.x - dir * (targetNode.dimension.height / 2) - 300,
-        i: true,
-        y: targetNode.position.y,
-
-      };
-
-      edge.points = [startingPoint, endingPoint];
-      console.log([startingPoint, endingPoint]);
-
-      return graph;
-    };
-
-    /* Calculate Initial position of the Arrows, on first draw and add only amount of x if not modified or not dragged*/
-    this.child.generateLine = function (points: any): any {
-
-      const lineFunction = shape
-        .line<any>()
-        .x(d => {
-          let addVal = 0;
-          if (d.i === undefined) {
-            addVal = 0;
-          }
-          const xval = d.x + addVal;
-          return xval;
-        })
-        .y(d => d.y)
-        .curve(this.curve);
-      return lineFunction(points);
-    };
+  // Método para manejar el archivo cargado desde el side-menu
+  onFileLoad(file: File): void {
+    this.fileUploadService.readFile(file).subscribe(
+      (content) => {
+        this.fileContent = content;
+      },
+      (error) => {
+        console.error('Error al cargar el archivo:', error);
+      }
+    );
   }
 }

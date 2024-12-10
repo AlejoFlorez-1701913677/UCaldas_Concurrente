@@ -1,5 +1,20 @@
+PRUEBA VISTA-GRAFO
 
-<div #graphContainer class="graph-container" >
- 
-PRUEBA GRAFO CONTAINER
-</div>
+<table *ngIf="tableData.length" class="table-auto border-collapse border border-gray-300">
+    <thead>
+      <tr>
+        <th *ngFor="let column of columns" class="border border-gray-300 px-4 py-2">
+          {{ column }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of tableData">
+        <td *ngFor="let column of columns" class="border border-gray-300 px-4 py-2">
+          {{ row[column] }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p *ngIf="!tableData.length" class="text-gray-500">No hay datos para mostrar.</p>
+  
