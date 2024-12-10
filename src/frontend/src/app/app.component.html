@@ -1,8 +1,11 @@
+<ng-container *ngIf="!isLoginPage()">
 <app-header></app-header>
 <div class="flex">
   <app-side-menu />
   <div class="text-black flex-grow p-6 overflow-auto  bg-gray-200 w-full mt-0">
     <app-vista-grafo></app-vista-grafo>
-    <router-outlet />
+    
   </div>
 </div>
+</ng-container>
+<router-outlet />
