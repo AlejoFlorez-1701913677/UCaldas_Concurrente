@@ -1,4 +1,5 @@
 import { Component, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -6,6 +7,12 @@ import { Component, HostListener } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
+  constructor(private router: Router){}
+
+  logout() {
+    localStorage.removeItem('token'); // Elimina el token
+    this.router.navigate(['/auth/login']); // Redirige al login
+  }
 
   openSubMenuArchivo: boolean = false;
   openSubMenuEditar: boolean = false;
@@ -193,6 +200,8 @@ export class HeaderComponent {
     // Aquí puedes manejar el archivo seleccionado
     console.log('Archivo seleccionado:', file);
   }
+
+
 }
 
 
