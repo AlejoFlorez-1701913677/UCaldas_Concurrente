@@ -13,4 +13,10 @@ export class AppComponent {
   isLoginPage(): boolean{
     return this.router.url === '/login';
   }
+
+  isAuthenticated(): boolean {
+    // Simulación de autenticación: verifica si hay un token almacenado
+    return !!localStorage.getItem('token');
+  }
+  
 }

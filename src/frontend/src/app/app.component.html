@@ -1,11 +1,13 @@
-<ng-container *ngIf="!isLoginPage()">
-<app-header></app-header>
-<div class="flex">
-  <app-side-menu />
-  <div class="text-black flex-grow p-6 overflow-auto  bg-gray-200 w-full mt-0">
-    <app-vista-grafo></app-vista-grafo>
-    
+<ng-container *ngIf="isAuthenticated(); else loginPage">
+  <app-header></app-header>
+  <div class="flex">
+    <app-side-menu></app-side-menu>
+    <div class="text-black flex-grow p-6 overflow-auto bg-gray-200 w-full mt-0">
+      <app-vista-grafo></app-vista-grafo>
+    </div>
   </div>
-</div>
 </ng-container>
-<router-outlet />
+
+<ng-template #loginPage>
+  <router-outlet></router-outlet>
+</ng-template>
