@@ -31,6 +31,8 @@ export class LoginComponent {
         this.errorMessage = 'Correo o contraseña incorrectos';
         console.log('Inicio de sesión fallido')
       }
+    }else{
+      this.errorMessage = 'Por favor completa todos los campos correctamente';
     }
   }
   
