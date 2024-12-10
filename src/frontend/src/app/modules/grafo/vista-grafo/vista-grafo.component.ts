@@ -11,6 +11,8 @@ export class VistaGrafoComponent implements OnChanges {
   @Input() fileContent: string | null = null;  // Contenido del archivo recibido
   tableData: Array<Record<string, string>> = [];
   columns: string[] = [];
+  currentPage: number = 1;  // Página actual
+  rowsPerPage: number = 10; // Filas por página
 
   constructor(private fileUploadService: FileUploadService) {} // Inyectamos el servicio
 
@@ -18,8 +20,6 @@ export class VistaGrafoComponent implements OnChanges {
     if (changes['fileContent'] && this.fileContent) {
       if (this.isJsonFile(this.fileContent)) {
         this.parseJsonFile(this.fileContent);
-        console.log('Datos JSON:', this.tableData);
-        console.log(this.fileContent)
       } else {
         this.parseVcfFile(this.fileContent);
       }
@@ -37,17 +37,14 @@ export class VistaGrafoComponent implements OnChanges {
 
   parseJsonFile(content: string): void {
     const jsonData = JSON.parse(content);
-    if (Array.isArray(jsonData) && jsonData.length > 0) {
-      this.columns = Object.keys(jsonData[0]);
-      this.tableData = jsonData;
-    } else {
-      console.error('El archivo JSON no tiene el formato esperado');
-    }
+    this.columns = Object.keys(jsonData[0]);
+    this.tableData = jsonData;
+    this.currentPage = 1; // Reiniciar la página cuando se cargue nuevo archivo
   }
 
   parseVcfFile(content: string): void {
     const lines = content.split('\n');
-    this.columns = lines[0].split('\t'); // Asume que los encabezados están en la primera línea y separados por tabulaciones
+    this.columns = lines[0].split('\t');
     this.tableData = lines.slice(1).map(line => {
       const values = line.split('\t');
       const row: Record<string, string> = {};
@@ -56,17 +53,33 @@ export class VistaGrafoComponent implements OnChanges {
       });
       return row;
     });
+    this.currentPage = 1; // Reiniciar la página cuando se cargue nuevo archivo
   }
 
-  // Método para manejar el archivo cargado desde el side-menu
-  onFileLoad(file: File): void {
-    this.fileUploadService.readFile(file).subscribe(
-      (content) => {
-        this.fileContent = content;
-      },
-      (error) => {
-        console.error('Error al cargar el archivo:', error);
-      }
-    );
+   // Obtener filas visibles de la página actual
+   get paginatedData(): Array<Record<string, string>> {
+    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
+    const endIndex = startIndex + this.rowsPerPage;
+    return this.tableData.slice(startIndex, endIndex);
+  }
+
+  // Navegar a la página siguiente
+  nextPage(): void {
+    if (this.currentPage * this.rowsPerPage < this.tableData.length) {
+      this.currentPage++;
+    }
+  }
+
+  // Navegar a la página anterior
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  // Obtener el rango de páginas
+  get pageNumbers(): number[] {
+    const totalPages = Math.ceil(this.tableData.length / this.rowsPerPage);
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
   }
 }

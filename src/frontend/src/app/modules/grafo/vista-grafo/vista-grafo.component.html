@@ -1,5 +1,3 @@
-PRUEBA VISTA-GRAFO
-
 <table *ngIf="tableData.length" class="table-auto border-collapse border border-gray-300">
     <thead>
       <tr>
@@ -9,12 +7,29 @@ PRUEBA VISTA-GRAFO
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let row of tableData">
+      <tr *ngFor="let row of paginatedData">
         <td *ngFor="let column of columns" class="border border-gray-300 px-4 py-2">
           {{ row[column] }}
         </td>
       </tr>
     </tbody>
   </table>
+  
+  <div *ngIf="tableData.length > rowsPerPage" class="pagination flex items-center justify-center space-x-5">
+    <button (click)="prevPage()" [disabled]="currentPage === 1" class="flex items-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-lg">
+        
+        <span>Anterior</span>
+      </button>
+    
+    <span>Página {{ currentPage }} de {{ pageNumbers.length }}</span>
+    
+    <button (click)="nextPage()" [disabled]="currentPage === pageNumbers.length" 
+    class="flex items-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-lg">
+      Siguiente
+      
+    </button>
+  </div>
+  
+  
   <p *ngIf="!tableData.length" class="text-gray-500">No hay datos para mostrar.</p>
   
