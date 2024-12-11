@@ -9,6 +9,7 @@ import { SideMenuComponent } from './public/master-page/side-menu/side-menu.comp
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { VistaGrafoComponent } from './modules/grafo/vista-grafo/vista-grafo.component'
 import { NgxGraphModule } from '@swimlane/ngx-graph';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
     BrowserModule,
     AppRoutingModule,
     NgxGraphModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

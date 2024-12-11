@@ -1,15 +1,33 @@
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
 th {
-  background-color: #f4f4f4;
-  font-weight: bold;
+  position: relative;
+}
+
+button {
+  background: none;
+  border: none;
+  font-size: 16px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  background-color: white;
+  width: 100%;
+  z-index: 10;
+}
+
+li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+li:hover {
+  background-color: #f0f0f0;
+}
+
+.bg-blue-500 {
+  background-color: #3b82f6; /* Color azul de TailwindCSS */
+  color: white; /* Asegúrate de que el texto sea visible */
 }

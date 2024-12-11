@@ -1,21 +1,34 @@
-<table *ngIf="tableData.length" class="table-auto border-collapse border border-gray-300">
+<table *ngIf="filteredData.length" class="table-auto border-collapse border border-gray-300">
     <thead>
-      <tr>
-        <th *ngFor="let column of columns" class="border border-gray-300 px-4 py-2">
-          {{ column }}
-        </th>
-      </tr>
+        <tr>
+            <th class="border border-gray-300 px-4 py-2">#</th> <!-- Columna de índice -->
+            <th *ngFor="let column of columns" class="border border-gray-300 px-4 py-2">
+                <span (click)="toggleDropdown(column)" class="cursor-pointer">
+                    {{ column }}
+                    <span class="ml-2">&#9660;</span>
+                </span>
+                <div *ngIf="showDropdown[column]" class="dropdown-content">
+                    <select [(ngModel)]="filters[column]" (ngModelChange)="onFilterChange($event, column)">
+                        <option value="">Seleccionar {{ column }}</option>
+                        <option *ngFor="let value of getUniqueValues(column)" [value]="value">
+                            {{ value }}
+                        </option>
+                    </select>
+                </div>
+            </th>
+        </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let row of paginatedData">
-        <td *ngFor="let column of columns" class="border border-gray-300 px-4 py-2">
-          {{ row[column] }}
-        </td>
-      </tr>
+        <tr *ngFor="let row of paginatedData; let i = index">
+            <td class="border border-gray-300 px-4 py-2">{{ getIndex(i) }}</td> <!-- Índice calculado -->
+            <td *ngFor="let column of columns" class="border border-gray-300 px-4 py-2">
+                {{ row[column] }}
+            </td>
+        </tr>
     </tbody>
-  </table>
-  
-  <div *ngIf="tableData.length > rowsPerPage" class="pagination flex items-center justify-center space-x-5">
+</table>
+
+<div *ngIf="tableData.length > rowsPerPage" class="pagination flex items-center justify-center space-x-5">
     <button (click)="prevPage()" [disabled]="currentPage === 1" class="flex items-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-lg">
         
         <span>Anterior</span>
@@ -29,7 +42,3 @@
       
     </button>
   </div>
-  
-  
-  <p *ngIf="!tableData.length" class="text-gray-500">No hay datos para mostrar.</p>
-  
