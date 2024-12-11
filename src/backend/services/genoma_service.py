@@ -79,7 +79,8 @@ class GenomeProcessorService:
         if operations:
             try:
                 result = await self.collection.insert_many(operations)
-                print(f"Insertados {result.inserted_ids} documentos")
+                #print(f"Insertados {result.inserted_ids} documentos")
+                print(f"Documentos Insertados.")
             except Exception as e:
                 print(f"Error durante la inserción masiva: {e}")
 

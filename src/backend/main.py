@@ -11,8 +11,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from database.mongo import Database
+
 from routes.file_route import router
 from routes.user_route import routerUser
+from routes.genomes_routes import routeGenome
+
 from config.setting import settings
 
 # Configuración de CORS
@@ -41,8 +44,10 @@ app.add_middleware(
 )
 
 # Registrar las rutas
-app.include_router(router, prefix="/genoma", tags=["file_upload"])
+app.include_router(router, prefix="/genoma", tags=["file_upload_v1"])
 app.include_router(routerUser, prefix="/User", tags=["user"])
+app.include_router(routeGenome, prefix="/genomeQuery", tags=["genomeQuery"])
+
 
 
 # Manejo de la interrupción (Ctrl+C)

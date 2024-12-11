@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File, BackgroundTasks
+from fastapi import APIRouter, Depends, UploadFile, File, BackgroundTasks, HTTPException
 import os
 import tempfile
 from database.mongo import Database
@@ -43,10 +43,10 @@ async def process_file(
         async def process_file_in_background():
             try:
                 # Llamar a la función para procesar el archivo en paralelo
-                column_positions = {}  # Definir las posiciones de columna aquí
+                #column_positions = {}  # Definir las posiciones de columna aquí
                 inserted_count, total_time, total_lines = (
                     await processor.process_file_parallel(
-                        temp_file_path, column_positions
+                        temp_file_path
                     )
                 )
                 background_tasks.add_task(cleanup_temp_file)
@@ -76,8 +76,3 @@ async def process_file(
             message=f"Error procesando archivo: {str(e)}", files_processed=0
         )
 
-
-@router.get("/create")
-async def main(db: AsyncIOMotorDatabase = Depends(Database.get_db)):
-    await db["books"].insert_one({"Config": "Success"})
-    return "Done"
