@@ -8,8 +8,12 @@ class Settings(BaseSettings):
     CHUNK_SIZE: int = 10000  # Tamaño de chunk para procesamiento
     MAX_WORKERS: int = 12  # Máximo de workers
     BATCH_SIZE: int = 1000  # Tamaño de batch para inserción
+    SECRET_KEY: str
+    ALGORITHM: str
+    TOKEN_MINUTES: int = 30
     ENABLE_PARALLEL_SEARCH: bool = True
     ENABLE_PARALLEL_SORT: bool = True
+
 
     class Config:
         env_file = ".env"
