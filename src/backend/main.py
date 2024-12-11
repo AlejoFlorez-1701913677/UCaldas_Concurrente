@@ -41,7 +41,7 @@ app.add_middleware(
 )
 
 # Registrar las rutas
-app.include_router(router, prefix="/genoma", tags=["file_upload"])
+app.include_router(router, prefix="/genoma", tags=["file_upload_v1"])
 app.include_router(routerUser, prefix="/User", tags=["user"])
 
 
