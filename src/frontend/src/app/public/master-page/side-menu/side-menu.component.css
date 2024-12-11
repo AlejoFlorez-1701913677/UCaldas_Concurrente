@@ -1,0 +1,18 @@
+nav {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Para usar todo el espacio vertical */
+  }
+  
+  label {
+    justify-content: flex-start; /* Alinea el texto e ícono a la izquierda */
+  }
+  
+  nav .mt-auto {
+    margin-top: auto; /* Ubica el botón Salir en el fondo */
+  }
+  
+  label:hover {
+    background-color: rgba(255, 0, 0, 0.1); /* Fondo rojo suave al pasar sobre el botón */
+  }
+  
