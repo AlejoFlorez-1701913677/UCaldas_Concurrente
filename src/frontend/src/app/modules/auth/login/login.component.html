@@ -1,0 +1,27 @@
+<div class="login-container">
+    <h2>Inicio Sesión</h2>
+    <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
+      <label for="email">Correo electrónico</label>
+      <input id="email" type="email" formControlName="email" placeholder="Ingrese su correo" />
+      <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+        <small class="error-message">El correo electrónico es inválido</small>
+      </div>
+  
+      <label for="password">Llave de acceso</label>
+      <input id="password" type="password" formControlName="password" placeholder="Ingrese su contraseña" />
+      <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+        <small class="error-message">La contraseña debe tener al menos 6 caracteres</small>
+      </div>
+      <button type="submit" [disabled]="!loginForm.valid">Iniciar Sesión</button>
+    </form>
+    <div *ngIf="errorMessage" class="error-message">
+      <p>{{ errorMessage }}</p>
+    </div>
+    <div class="links">
+      <a routerLink="/forgot-password">Olvidé mi contraseña</a>
+      <a routerLink="/register">Registrar</a>
+    </div>
+  </div>
+
+
+  
