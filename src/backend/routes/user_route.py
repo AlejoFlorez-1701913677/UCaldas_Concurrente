@@ -60,6 +60,7 @@ async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncIOMotorDatabase = Depends(Database.get_db)
 ):
+    print(form_data)
     user_collection = db["users"]
     user = await user_collection.find_one({"username": form_data.username})
     if not user:
