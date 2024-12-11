@@ -9,7 +9,8 @@ import { SideMenuComponent } from './public/master-page/side-menu/side-menu.comp
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { VistaGrafoComponent } from './modules/grafo/vista-grafo/vista-grafo.component'
 import { NgxGraphModule } from '@swimlane/ngx-graph';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RegistroComponent } from './registro/registro.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { FormsModule } from '@angular/forms';
     RouteNotFoundComponent,
     ServerErrorComponent,
     SideMenuComponent,
-    VistaGrafoComponent
+    VistaGrafoComponent,
+    RegistroComponent
   ],
   imports: [
     BrowserModule,
@@ -26,6 +28,7 @@ import { FormsModule } from '@angular/forms';
     NgxGraphModule,
     BrowserAnimationsModule,
     FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
