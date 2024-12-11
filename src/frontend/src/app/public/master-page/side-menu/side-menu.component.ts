@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { FileUploadService } from 'src/app/services/file-upload.service';
 
 @Component({
@@ -9,7 +10,13 @@ import { FileUploadService } from 'src/app/services/file-upload.service';
 export class SideMenuComponent {
   @Output() fileLoaded = new EventEmitter<string>();  // Emite el contenido del archivo
 
-  constructor(private fileUploadService: FileUploadService) {}
+  constructor(private fileUploadService: FileUploadService, private router: Router) {}
+  
+
+  logout() {
+    localStorage.removeItem('token'); // Elimina el token
+    this.router.navigate(['/auth/login']); // Redirige al login
+  }
 
   onFileLoad(event: Event): void {
     const input = event.target as HTMLInputElement;
