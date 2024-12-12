@@ -103,15 +103,10 @@ export class VistaGrafoComponent implements OnChanges {
 
 
 
-  // Paginación (similar a lo que ya tienes)
+  // Paginación 
   rowsPerPage: number = 10;
   currentPage: number = 1;
 
-  /*get paginatedData(): Array<Record<string, string>> {
-    const start = (this.currentPage - 1) * this.rowsPerPage;
-    return this.filteredData.slice(start, start + this.rowsPerPage);
-  }
-*/
   get paginatedData(): Array<Record<string, string>> {
     const start = (this.currentPage - 1) * this.rowsPerPage;
     const paginated = this.filteredData.slice(start, start + this.rowsPerPage);

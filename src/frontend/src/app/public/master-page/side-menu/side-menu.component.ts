@@ -15,7 +15,8 @@ export class SideMenuComponent {
 
   logout() {
     localStorage.removeItem('token'); // Elimina el token
-    this.router.navigate(['/auth/login']); // Redirige al login
+    this.router.navigate(['/login']); // Redirige al login
+    console.log("SALI")
   }
 
   onFileLoad(event: Event): void {
