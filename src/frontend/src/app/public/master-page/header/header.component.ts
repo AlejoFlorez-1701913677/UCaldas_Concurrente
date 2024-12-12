@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -6,8 +6,9 @@ import { Component, HostListener } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  
+  @Input() selectedFileName: string = 'No se ha seleccionado ningún archivo';
 
+  
 
 }
 

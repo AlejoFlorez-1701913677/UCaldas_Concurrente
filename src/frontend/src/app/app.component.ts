@@ -10,7 +10,7 @@ import { FileUploadService } from './services/file-upload.service';
 export class AppComponent {
   title = 'Proyecto Concurrente';
   fileContent: string | null = null; // Variable para almacenar el contenido del archivo
-
+  selectedFileName: string = 'No se ha seleccionado ningún archivo';
   constructor(private router: Router, private fileUploadService: FileUploadService) {}
 
   isLoginPage(): boolean {
@@ -22,7 +22,12 @@ export class AppComponent {
     return !!localStorage.getItem('token');
   }
 
-  onFileLoaded(content: string): void {
-    this.fileContent = content; // Almacena el contenido del archivo
+  onFileLoaded(event: { content: string; fileName: string }): void {
+    this.fileContent = event.content;
+    this.selectedFileName = event.fileName;
   }
+
+  /*onFileLoadedName(fileName: string) {
+    this.selectedFileName = fileName;
+  }*/
 }
