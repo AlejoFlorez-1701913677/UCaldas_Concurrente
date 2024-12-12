@@ -1,57 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileUploadService {
 
-  constructor() { }
+  private uploadUrl = 'http://localhost:8000/genomaV2/process_file'; // URL del backend donde se subirá el archivo
 
-  readFile(file: File): Observable<string> {
-    return new Observable<string>((observer) => {
-      const reader = new FileReader();
-      
-      reader.onload = (e: any) => {
-        const content = e.target.result;
-        if (file.name.endsWith('.vcf')) {
-          // Procesar archivo VCF
-          const vcfContent = this.parseVcf(content);
-          observer.next(vcfContent);  // Emitir contenido procesado
-        } else if (file.name.endsWith('.json')) {
-          // Procesar archivo JSON
-          observer.next(content);  // Emitir contenido JSON
-        } else {
-          observer.error('Tipo de archivo no soportado');
-        }
-        observer.complete();
-      };
+  constructor(private http: HttpClient) { }
 
-      reader.onerror = (err) => {
-        observer.error('Error al leer el archivo');
-      };
-      
-      reader.readAsText(file);  // Lee el archivo como texto
+  upload(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+
+    const headers = new HttpHeaders({
+      'enctype': 'multipart/form-data'
     });
+
+    return this.http.post(this.uploadUrl, formData, { headers });
   }
 
-  // Función para procesar el contenido de un archivo VCF
-private parseVcf(content: string): string {
-  const lines = content.split('\n');
-  const headers: string[] = [];  // Declara headers como un arreglo de cadenas
-  const data: any[] = [];
-
-  lines.forEach(line => {
-    if (line.startsWith('#')) {
-      // Línea de encabezado, la podemos ignorar o procesar
-      headers.push(line);
-    } else {
-      // Línea de datos
-      const columns = line.split('\t');
-      data.push(columns);
-    }
-  });
-
-  return JSON.stringify({ headers, data }); // Devuelvo como JSON para integrarlo en la tabla
-}
 }

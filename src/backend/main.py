@@ -37,12 +37,14 @@ app = FastAPI(lifespan=lifespan)
 
 app = FastAPI(lifespan=lifespan)
 app.router.lifespan_context = lifespan
+
+# Habilitar CORS (por lo general se hace algo así)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Permitir orígenes específicos
+    allow_origins=["*"],  # Esto permite todos los orígenes
     allow_credentials=True,
-    allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
-    allow_headers=["*"],  # Permitir todos los encabezados
+    allow_methods=["*"],  # Esto permite todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Esto permite todos los encabezados
 )
 
 # Registrar las rutas

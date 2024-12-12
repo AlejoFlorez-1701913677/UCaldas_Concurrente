@@ -11,7 +11,7 @@ export class AppComponent {
   title = 'Proyecto Concurrente';
   fileContent: string | null = null; // Variable para almacenar el contenido del archivo
   selectedFileName: string = 'No se ha seleccionado ningún archivo';
-  constructor(private router: Router, private fileUploadService: FileUploadService) {}
+  constructor(private router: Router, private fileUploadService: FileUploadService) { }
 
   isLoginPage(): boolean {
     return this.router.url === '/login';
