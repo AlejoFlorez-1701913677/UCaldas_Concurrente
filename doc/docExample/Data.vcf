@@ -1,0 +1,7 @@
+##fileformat=VCFv4.2
+##source=my_variant_caller
+##reference=GRCh38
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	output_CS1	output_CS12	output_CS14	output_CS15	output_CS16	output_CS17	output_CS18	output_CS19
+chr01   118145  .       A       G       69.8    PASS    .       GT:AD:DP:GQ:PL  0/0:17,0:17:51:0,51,533  0/0:10,0:10:30:0,30,319  0/0:11,0:11:33:0,33,358  0/0:7,0:7:21:0,21,294
+chr01   120305  .       T       C       55.4    PASS    .       GT:AD:DP:GQ:PL  0/0:20,0:20:60:0,60,600  0/0:15,0:15:45:0,45,450  0/0:17,0:17:51:0,51,510  0/0:9,0:9:27:0,27,270
+chr01   121732  .       G       A       99.9    PASS    .       GT:AD:DP:GQ:PL  0/0:22,0:22:66:0,66,660  0/0:18,0:18:54:0,54,540  0/0:20,0:20:60:0,60,600  0/0:10,0:10:30:0,30,300

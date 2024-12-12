@@ -22,3 +22,4 @@ aiohttp
 tenacity
 pydantic-settings
 bcrypt
+pika
