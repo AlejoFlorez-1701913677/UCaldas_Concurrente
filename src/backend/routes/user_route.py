@@ -49,7 +49,7 @@ async def register_user(user: UserCreate, db: AsyncIOMotorDatabase = Depends(Dat
     }
     result = await users_collection.insert_one(new_user)
     user_id = str(result.inserted_id)
-    send_registration_email(user.email, access_key)
+    #send_registration_email(user.email, access_key)
     return UserResponse(id=user_id, username=user.username, email=user.email)
 
 @routerUser.post("/login")

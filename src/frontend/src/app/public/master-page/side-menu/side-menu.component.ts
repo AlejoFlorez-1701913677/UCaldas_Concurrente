@@ -24,12 +24,27 @@ export class SideMenuComponent {
     this.upload();
   }
 
+  onFileLoad2(event: any): void {
+    this.selectedFile = event.target.files[0];
+    this.upload2();
+  }
+
   upload(): void {
     if (this.selectedFile) {
       this.fileUploadService.upload(this.selectedFile).subscribe(response => {
         console.log('Archivo subido con éxito', response);
       }, error => {
         console.error('Error al subir archivo', error);
+      });
+    }
+  }
+  
+  upload2(): void {
+    if (this.selectedFile) {
+      this.fileUploadService.upload2(this.selectedFile).subscribe(response => {
+        console.log('Archivo subido con éxito 2', response);
+      }, error => {
+        console.error('Error al subir archivo 2', error);
       });
     }
   }
