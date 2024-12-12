@@ -22,3 +22,5 @@ aiohttp
 tenacity
 pydantic-settings
 bcrypt
+pika
+argon2-cffi

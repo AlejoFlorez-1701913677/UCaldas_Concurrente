@@ -14,6 +14,8 @@ from database.mongo import Database
 
 from routes.file_route import router
 from routes.user_route import routerUser
+from routes.file_routev2 import routerV2
+
 from routes.genomes_routes import routeGenome
 
 from config.setting import settings
@@ -35,16 +37,20 @@ app = FastAPI(lifespan=lifespan)
 
 app = FastAPI(lifespan=lifespan)
 app.router.lifespan_context = lifespan
+
+# Habilitar CORS (por lo general se hace algo así)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Permitir orígenes específicos
+    allow_origins=["*"],  # Esto permite todos los orígenes
     allow_credentials=True,
-    allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
-    allow_headers=["*"],  # Permitir todos los encabezados
+    allow_methods=["*"],  # Esto permite todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Esto permite todos los encabezados
 )
 
 # Registrar las rutas
 app.include_router(router, prefix="/genoma", tags=["file_upload_v1"])
+app.include_router(routerV2, prefix="/genomaV2", tags=["file_upload_v2"])
+
 app.include_router(routerUser, prefix="/User", tags=["user"])
 app.include_router(routeGenome, prefix="/genomeQuery", tags=["genomeQuery"])
 
