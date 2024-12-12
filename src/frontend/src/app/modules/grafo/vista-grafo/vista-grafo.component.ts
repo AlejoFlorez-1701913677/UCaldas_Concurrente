@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { FileUploadService } from 'src/app/services/file-upload.service';
 
 @Component({
@@ -8,6 +8,8 @@ import { FileUploadService } from 'src/app/services/file-upload.service';
 })
 export class VistaGrafoComponent implements OnChanges {
   @Input() fileContent: string | null = null;
+  @Output() fileLoaded = new EventEmitter<string>();
+
   tableData: Array<Record<string, string>> = [];
   columns: string[] = [];
   filters: Record<string, string | null> = {}; // Almacena el filtro para cada columna
@@ -18,6 +20,7 @@ export class VistaGrafoComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['fileContent'] && this.fileContent) {
+        this.fileLoaded.emit(this.fileLoaded.name);
       if (this.isJsonFile(this.fileContent)) {
         this.parseJsonFile(this.fileContent);
       } else {
