@@ -1,10 +1,10 @@
 <div class="register-container">
     <h2>Registro</h2>
     <form (ngSubmit)="onSubmit()" [formGroup]="registerForm">
-        <label for="name">Nombre</label>
-        <input id="name" type="text" formControlName="name" placeholder="Ingrese su nombre" />
-        <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
-            <small class="error-message">El nombre es obligatorio</small>
+        <label for="username">Nombre</label>
+        <input id="username" type="text" formControlName="username" placeholder="Ingrese su nombre" />
+        <div *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+            <small class="error-message">El nombre de usuario es obligatorio</small>
         </div>
 
         <label for="email">Correo electrónico</label>
