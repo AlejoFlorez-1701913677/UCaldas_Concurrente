@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ConfigServiceService } from './config-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://127.0.0.1:8000'; // Cambia por tu endpoint
+ 
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private configService: ConfigServiceService) {}
 
   login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, credentials);
+    return this.http.post(`${this.configService.apiUrl}/login`, credentials);
   }
 }
