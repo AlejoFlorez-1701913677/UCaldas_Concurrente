@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { ConfigServiceService } from './config-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileUploadService {
 
-  constructor() { }
-
+  constructor(private http: HttpClient, private configService: ConfigServiceService) { }
+/*
   readFile(file: File): Observable<string> {
     return new Observable<string>((observer) => {
       const reader = new FileReader();
@@ -34,7 +38,23 @@ export class FileUploadService {
       reader.readAsText(file);  // Lee el archivo como texto
     });
   }
+*/
+readFile(file: File): Observable<string> {
+  const formData = new FormData();
+  formData.append('file', file);
 
+  return this.http.post<any>(`${this.configService.apiUrl}/genoma/process_file`, formData, {
+    responseType: 'json'
+  }).pipe(
+    map(response => {
+      return response.text;
+    }),
+    catchError((error: HttpErrorResponse) => {
+      console.error('Error al cargar el archivo:', error);
+      return throwError(() => error);
+    })
+  );
+}
   // Función para procesar el contenido de un archivo VCF
 private parseVcf(content: string): string {
   const lines = content.split('\n');

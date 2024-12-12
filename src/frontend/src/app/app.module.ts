@@ -11,6 +11,7 @@ import { VistaGrafoComponent } from './modules/grafo/vista-grafo/vista-grafo.com
 import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RegistroComponent } from './registro/registro.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { RegistroComponent } from './registro/registro.component';
     NgxGraphModule,
     BrowserAnimationsModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
