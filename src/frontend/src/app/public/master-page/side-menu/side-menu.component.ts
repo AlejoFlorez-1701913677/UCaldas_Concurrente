@@ -11,7 +11,7 @@ import { FileUploadService } from 'src/app/services/file-upload.service';
 })
 export class SideMenuComponent {
   @Output() fileUploaded = new EventEmitter<any>();
-  @Output() filesFetched = new EventEmitter<any>();
+  @Output() filesFetched = new EventEmitter<any[]>();
 
   selectedFile = null;
 
@@ -63,12 +63,13 @@ export class SideMenuComponent {
 
   fetchFiles(posStart: number, posEnd: number, limit: number): void {
     const params = { 
-      pos_start: posStart, 
-      pos_end: posEnd, 
+      /*pos_start: posStart, 
+      pos_end: posEnd,*/ 
       limit: limit};
+    
   
-    this.http.get(`${this.configService.apiUrl}/genomeQuery/genomes`, { params }).subscribe({
-      next: (response: any) => {
+    this.http.get<any[]>(`${this.configService.apiUrl}/genomeQuery/genomes`, { params }).subscribe({
+      next: (response: any[]) => {
         console.log('Archivos obtenidos', response);
         this.filesFetched.emit(response); // Emitir los archivos obtenidos
       },
