@@ -1,4 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { ConfigServiceService } from 'src/app/services/config-service.service';
 import { FileUploadService } from 'src/app/services/file-upload.service';
 
 @Component({
@@ -8,7 +10,9 @@ import { FileUploadService } from 'src/app/services/file-upload.service';
 })
 export class VistaGrafoComponent implements OnChanges {
   @Input() fileContent: string | null = null;
+  @Input() filesFetched = new EventEmitter<any>();
   @Output() fileLoaded = new EventEmitter<string>();
+  @Input() files: any[] = [];
 
   tableData: Array<Record<string, string>> = [];
   columns: string[] = [];
@@ -16,11 +20,16 @@ export class VistaGrafoComponent implements OnChanges {
   filteredData: Array<Record<string, string>> = []; // Almacena los datos filtrados
   showDropdown: Record<string, boolean> = {}; // Para controlar qué columna tiene el dropdown abierto
 
-  constructor(private fileUploadService: FileUploadService) { }
+
+  constructor(
+    private fileUploadService: FileUploadService,
+    private http: HttpClient,
+    private configService: ConfigServiceService
+  ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['fileContent'] && this.fileContent) {
-        this.fileLoaded.emit(this.fileLoaded.name);
+      this.fileLoaded.emit(this.fileLoaded.name);
       if (this.isJsonFile(this.fileContent)) {
         this.parseJsonFile(this.fileContent);
       } else {
@@ -36,8 +45,28 @@ export class VistaGrafoComponent implements OnChanges {
       });
     }
   }
-  
-  
+
+  fetchFiles(pos_start: number, limit: number): void {
+    const pos_end = pos_start + limit;
+    const url = `${this.configService.apiUrl}/genomeQuery/genomes?pos_start=${pos_start}&pos_end=${pos_end}&limit=${limit}`;
+
+    this.http.get<any[]>(url).subscribe({
+      next: (files) => {
+        this.tableData = files; // Asignar datos obtenidos a tableData
+        this.filteredData = files; // Inicializar datos filtrados
+        this.columns = files.length ? Object.keys(files[0]) : []; // Configurar columnas dinámicamente
+        this.filesFetched.emit(files);
+        console.log('Archivos obtenidos con paginación:', files);
+        this.filesFetched.emit(files); // Emitir los archivos
+      },
+      error: (error) => {
+        console.error('Error al obtener los archivos con paginación:', error);
+      }
+    });
+  }
+
+
+
 
   isJsonFile(content: string): boolean {
     try {
@@ -69,8 +98,8 @@ export class VistaGrafoComponent implements OnChanges {
     this.filteredData = this.tableData; // Inicializamos los datos filtrados
   }
 
-   // Toggle para abrir/cerrar el dropdown
-   toggleDropdown(column: string): void {
+  // Toggle para abrir/cerrar el dropdown
+  toggleDropdown(column: string): void {
     this.showDropdown[column] = !this.showDropdown[column];
   }
 
@@ -104,11 +133,25 @@ export class VistaGrafoComponent implements OnChanges {
     this.applyFilters();
   }
 
+  handleFetchedFiles(files: any[]): void {
+    this.columns = Object.keys(files[0]); // Extraer columnas dinámicamente
+    this.tableData = files; // Almacenar los datos para la tabla
+    this.filteredData = files; // Inicializar datos filtrados
+    console.log('Datos recibidos:', this.tableData);
+  }
+  
+
 
 
   // Paginación 
   rowsPerPage: number = 10;
   currentPage: number = 1;
+
+  loadPage(page: number): void {
+    const pos_start = (page - 1) * this.rowsPerPage;
+    this.fetchFiles(pos_start, this.rowsPerPage);
+    this.currentPage = page;
+  }
 
   get paginatedData(): Array<Record<string, string>> {
     const start = (this.currentPage - 1) * this.rowsPerPage;
@@ -118,14 +161,14 @@ export class VistaGrafoComponent implements OnChanges {
 
   prevPage(): void {
     if (this.currentPage > 1) {
-      this.currentPage--;
+      this.loadPage(this.currentPage - 1);
     }
   }
 
   nextPage(): void {
     const totalPages = Math.ceil(this.filteredData.length / this.rowsPerPage);
     if (this.currentPage < totalPages) {
-      this.currentPage++;
+      this.loadPage(this.currentPage + 1);
     }
   }
 
@@ -133,10 +176,10 @@ export class VistaGrafoComponent implements OnChanges {
     return Array.from({ length: Math.ceil(this.filteredData.length / this.rowsPerPage) }, (_, i) => i + 1);
   }
 
- 
+
   getIndex(rowIndex: number): number {
     // Devuelve el índice con base en la página actual
     return (this.currentPage - 1) * this.rowsPerPage + rowIndex + 1;
   }
-  
+
 }
