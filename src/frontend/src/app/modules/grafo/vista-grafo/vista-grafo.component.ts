@@ -1,7 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
-import { ConfigServiceService } from 'src/app/services/config-service.service';
-import { FileUploadService } from 'src/app/services/file-upload.service';
+
 
 @Component({
   selector: 'app-vista-grafo',
@@ -10,24 +8,20 @@ import { FileUploadService } from 'src/app/services/file-upload.service';
 })
 export class VistaGrafoComponent implements OnChanges {
   @Input() fileContent: any[] = [];
-  @Input() filesFetched = new EventEmitter<any>();
-  @Output() fileLoaded = new EventEmitter<string>();
-  @Input() files: any[] = [];
+  //@Input() filesFetched = new EventEmitter<any>();
+  //@Output() fileLoaded = new EventEmitter<string>();
+  //@Input() files: any[] = [];
 
   filteredData: any[] = []; // Datos filtrados y paginados
   columns: string[] = [];
   filters: { [key: string]: string } = {};
   showDropdown: { [key: string]: boolean } = {};
-  tableData: Array<Record<string, string>> = [];
+  //tableData: Array<Record<string, string>> = [];
   rowsPerPage = 10;
   currentPage = 1;
 
 
-  constructor(
-    private fileUploadService: FileUploadService,
-    private http: HttpClient,
-    private configService: ConfigServiceService
-  ) { }
+  constructor() { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['fileContent'] && this.fileContent) {
@@ -55,13 +49,14 @@ export class VistaGrafoComponent implements OnChanges {
     this.currentPage = 1; // Resetear a la primera página
   }
 
-  get paginatedData(): any[] {
-    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
-    return this.filteredData.slice(startIndex, startIndex + this.rowsPerPage);
-  }
-
   getIndex(index: number): number {
     return (this.currentPage - 1) * this.rowsPerPage + index + 1;
+  }
+
+  get paginatedData(): any[] {
+    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
+    const endIndex = startIndex + this.rowsPerPage;
+    return this.filteredData.slice(startIndex, endIndex);
   }
 
   prevPage(): void {
@@ -76,6 +71,27 @@ export class VistaGrafoComponent implements OnChanges {
     return Math.ceil(this.filteredData.length / this.rowsPerPage);
   }
 
+  // Toggle para abrir/cerrar el dropdown
+  toggleDropdown(column: string): void {
+    this.showDropdown[column] = !this.showDropdown[column];
+  }
+}
+/*
+  // Asigna el valor seleccionado del dropdown al filtro de la columna
+  selectFilterValue(column: string, value: string): void {
+    this.filters[column] = value;
+    this.applyFilters(); // Aplica el filtro inmediatamente después de seleccionar el valor
+    this.showDropdown[column] = false; // Cierra el dropdown después de seleccionar
+  }
+*/
+  /*
+  get paginatedData(): any[] {
+    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
+    return this.filteredData.slice(startIndex, startIndex + this.rowsPerPage);
+  }
+*/
+
+  /*
   initializeFilters(): void {
     this.columns.forEach(column => {
       if (!this.filters[column]) {
@@ -84,8 +100,9 @@ export class VistaGrafoComponent implements OnChanges {
       this.showDropdown[column] = false; // Inicializar el estado del dropdown como cerrado (false)
     });
   }
+*/
 
-
+/*
   fetchFiles(pos_start: number, limit: number): void {
     const pos_end = pos_start + limit;
     const url = `${this.configService.apiUrl}/genomeQuery/genomes?pos_start=${pos_start}&pos_end=${pos_end}&limit=${limit}`;
@@ -103,24 +120,15 @@ export class VistaGrafoComponent implements OnChanges {
         console.error('Error al obtener los archivos con paginación:', error);
       }
     });
+    
   }
-
+*/
 
 
 
   
 
-  // Toggle para abrir/cerrar el dropdown
-  toggleDropdown(column: string): void {
-    this.showDropdown[column] = !this.showDropdown[column];
-  }
-
-  // Asigna el valor seleccionado del dropdown al filtro de la columna
-  selectFilterValue(column: string, value: string): void {
-    this.filters[column] = value;
-    this.applyFilters(); // Aplica el filtro inmediatamente después de seleccionar el valor
-    this.showDropdown[column] = false; // Cierra el dropdown después de seleccionar
-  }
+  
 
   // Obtiene los valores únicos de una columna para el filtro
   /*
@@ -193,4 +201,4 @@ export class VistaGrafoComponent implements OnChanges {
     return (this.currentPage - 1) * this.rowsPerPage + rowIndex + 1;
   }
 */
-}
+

@@ -17,6 +17,7 @@ export class AppComponent {
   onFilesFetched(data: any[]): void {
     console.log('Datos recibidos en el componente padre:', data);
     this.fileContent = data; // Pasar los datos al grafo-component
+    //this.selectedFileName = data;
   }
 
   isLoginPage(): boolean {
