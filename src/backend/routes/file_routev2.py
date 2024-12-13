@@ -6,6 +6,9 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 
 import os
 import tempfile
+import traceback
+
+from multiprocessing import Pool, cpu_count
 
 routerV2 = APIRouter()
 
@@ -40,39 +43,16 @@ async def process_file(
                     message="Por favor, suba un archivo VCF", files_processed=0
                 )
             
-            # Función para procesar el archivo en segundo plano
-            async def process_file_in_background():
-                try:
-                    # Llamar a la función para procesar el archivo en paralelo
-                    #column_positions = {}  # Definir las posiciones de columna aquí
-                    inserted_count, total_time, total_lines = (
-                        await processor.process_file_parallel(
-                            temp_file_path
-                        )
-                    )
-                    background_tasks.add_task(cleanup_temp_file)
-                    return inserted_count, total_time
-                except Exception as e:
-                    print(f"Error procesando el archivo en segundo plano: {str(e)}")
-                    return 0
-
-            # Función para eliminar el archivo temporal
-            def cleanup_temp_file():
-                try:
-                    os.unlink(temp_file_path)
-                except Exception as e:
-                    print(f"Error eliminando archivo temporal: {e}")
-
-            # Añadir tarea en segundo plano
-            files_processed, t_time = await process_file_in_background()
+            processor.process_file_in_chunks(temp_file_path)
 
             return ProcessFileResponse(
                 message="Archivo recibido y procesado en segundo plano",
-                files_processed=files_processed,
-                total_time=t_time,
+                files_processed=1,
+                total_time=0,
             )
 
     except Exception as e:
+        traceback.print_exc()
         return ProcessFileResponse(
             message=f"Error procesando archivo: {str(e)}", files_processed=0
         )
