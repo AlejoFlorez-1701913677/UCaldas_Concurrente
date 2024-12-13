@@ -8,4 +8,6 @@ export class ConfigServiceService {
   apiUrl = environment.apiUrl;
 
   constructor() { }
+
+  
 }
