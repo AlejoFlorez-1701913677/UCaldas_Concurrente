@@ -16,9 +16,9 @@ export class SideMenuComponent {
   selectedFile = null;
 
   constructor(
-    private fileUploadService: FileUploadService, 
-    private router: Router, 
-    private http: HttpClient, 
+    private fileUploadService: FileUploadService,
+    private router: Router,
+    private http: HttpClient,
     private configService: ConfigServiceService
   ) { }
 
@@ -50,7 +50,7 @@ export class SideMenuComponent {
       });
     }
   }
-  
+
   upload2(): void {
     if (this.selectedFile) {
       this.fileUploadService.upload2(this.selectedFile).subscribe(response => {
@@ -61,13 +61,17 @@ export class SideMenuComponent {
     }
   }
 
-  fetchFiles(posStart: number, posEnd: number, limit: number): void {
-    const params = { 
-      /*pos_start: posStart, 
-      pos_end: posEnd,*/ 
-      limit: limit};
-    
-  
+  fetchFiles(limit: number, posStart?: number, posEnd?: number,): void {
+    let params: any = {
+      limit: limit
+    };
+    if (posStart !== undefined) {
+      params.pos_start = posStart;
+    }
+    if (posEnd !== undefined) {
+      params.pos_end = posEnd;
+    }
+
     this.http.get<any[]>(`${this.configService.apiUrl}/genomeQuery/genomes`, { params }).subscribe({
       next: (response: any[]) => {
         console.log('Archivos obtenidos', response);
@@ -78,6 +82,6 @@ export class SideMenuComponent {
       }
     });
   }
-  
+
 
 }

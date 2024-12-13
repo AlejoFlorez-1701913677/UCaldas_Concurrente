@@ -1,40 +1,44 @@
 from fastapi import APIRouter,Depends, HTTPException, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from database.mongo import Database
-
 from typing import Optional, List
-
-from response.genome_record import GenomeRecord
+from models.genome_record import GenomeRecord
+from typing import List, Optional
+from fastapi import APIRouter, Query, HTTPException, Depends
+from motor.motor_asyncio import AsyncIOMotorDatabase
+from database.mongo import Database
+from models.genome_record import GenomeRecord
 
 routeGenome = APIRouter()
 
-# Endpoint para obtener un subconjunto de datos
 @routeGenome.get("/genomes", response_model=List[GenomeRecord])
 async def get_genomes(
     chrom: Optional[str] = Query(None, description="Filtro por cromosoma"),
-    pos_start: Optional[int] = Query(None, description="Posición inicial"),
-    pos_end: Optional[int] = Query(None, description="Posición final"),
+    #pos: Optional[int] = Query(None, description="Posición del cromosoma"),
+    filter: Optional[str] = Query(None, description="Filtro por cromosoma"),
+    info: Optional[str] = Query(None, description="Filtro por información"),
+    format: Optional[str] = Query(None, description="Filtro por formato"),
     limit: int = Query(100, description="Número máximo de registros a retornar"),
+    offset: int = Query(0, description="Offset para paginación de registros"),
     db: AsyncIOMotorDatabase = Depends(Database.get_db)
 ):
     """
-    Obtiene registros de la colección `genomas_vcf` con filtros opcionales.
+    Obtiene registros de la colección `genomas_vcf` con filtros opcionales y paginación.
     """
     collection = db["genomas_vcf"]
-
     query = {}
 
     if chrom:
         query["CHROM"] = chrom
-    if pos_start is not None and pos_end is not None:
-        query["POS"] = {"$gte": str(pos_start), "$lte": str(pos_end)}
-    elif pos_start is not None:
-        query["POS"] = {"$gte": str(pos_start)}
-    elif pos_end is not None:
-        query["POS"] = {"$lte": str(pos_end)}
+    if filter:
+        query["Filter"] = filter
+    if info:
+        query["INFO"] = info
+    if format:
+        query["FORMAT"] = format
 
     try:
-        cursor = collection.find(query).limit(limit)
+        cursor = collection.find(query).skip(offset).limit(limit)
         results = [doc async for doc in cursor]
         return results
     except Exception as e:
