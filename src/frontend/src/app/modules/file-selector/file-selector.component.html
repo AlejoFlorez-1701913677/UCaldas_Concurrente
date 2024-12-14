@@ -1,0 +1,9 @@
+<div class="modal">
+    <h2>Selecciona un archivo</h2>
+    <ul>
+      <li *ngFor="let file of files" (click)="selectFile(file)">
+        {{ file.name }}
+      </li>
+    </ul>
+    <button (click)="close()">Cerrar</button>
+  </div>

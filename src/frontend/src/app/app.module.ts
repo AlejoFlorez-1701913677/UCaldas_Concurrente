@@ -15,6 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { PopupComponent } from './popup/popup.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { FileSelectorComponent } from './modules/file-selector/file-selector.component';
 
 
 
@@ -27,7 +28,8 @@ import { MatButtonModule } from '@angular/material/button';
     SideMenuComponent,
     VistaGrafoComponent,
     RegistroComponent,
-    PopupComponent
+    PopupComponent,
+    FileSelectorComponent
   ],
   imports: [
     BrowserModule,

@@ -3,6 +3,9 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfigServiceService } from 'src/app/services/config-service.service';
 import { FileUploadService } from 'src/app/services/file-upload.service';
+import { MatDialog } from '@angular/material/dialog';
+import { FileSelectorComponent } from 'src/app/modules/file-selector/file-selector.component';
+
 
 @Component({
   selector: 'app-side-menu',
@@ -19,7 +22,8 @@ export class SideMenuComponent {
     private fileUploadService: FileUploadService,
     private router: Router,
     private http: HttpClient,
-    private configService: ConfigServiceService
+    private configService: ConfigServiceService,
+    private dialog: MatDialog
   ) { }
 
 
@@ -74,6 +78,43 @@ export class SideMenuComponent {
       }
     });
   }
+
+  //PRUEBAS DE SELECTOR DE ARCHIVOS POR NOMBRE
+
+  // Método que maneja la carga del archivo
+  loadFileData(fileName: string): void {
+    const fileUrl = `https://concurrente.free.beeceptor.com/todos`; // URL de los archivos
+
+    this.http.get(fileUrl).subscribe((response) => {
+      console.log(response);  // Aquí puedes manejar los datos del archivo como desees
+      alert(`Se ha cargado el archivo: ${fileName}`);  // Solo como ejemplo, muestra el nombre del archivo
+    }, (error) => {
+      console.error('Error al cargar el archivo:', error);
+    });
+  }
+
+  // Método que abre el selector de archivos
+  openFileSelector(): void {
+    // Hacer una solicitud GET a la URL
+    this.http.get<any[]>('https://concurrente.free.beeceptor.com/todos').subscribe(
+      (files) => {
+        // Abre el modal de selección de archivo y pasa los archivos
+        const dialogRef = this.dialog.open(FileSelectorComponent, {
+          data: { files: files },  // Pasa los archivos obtenidos a FileSelectorComponent
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.loadFileData(result); // Llama a la carga de datos del archivo seleccionado
+          }
+        });
+      },
+      (error) => {
+        console.error('Error al obtener archivos:', error);
+      }
+    );
+  }
+  
 
 
 }
