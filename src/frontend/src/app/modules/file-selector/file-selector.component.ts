@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-file-selector',
@@ -10,7 +10,7 @@ export class FileSelectorComponent {
   @Input() files: any[] = [];  // Recibe los archivos
   @Output() fileSelected = new EventEmitter<string>();
 
-  constructor(public dialogRef: MatDialogRef<FileSelectorComponent>) {}
+  constructor(public dialogRef: MatDialogRef<FileSelectorComponent>, @Inject(MAT_DIALOG_DATA) public data: { files: any[] }) {}
   
   selectFile(file: any): void {
     this.fileSelected.emit(file.name); // Emite el nombre del archivo seleccionado

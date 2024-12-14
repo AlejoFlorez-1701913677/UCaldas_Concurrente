@@ -85,12 +85,12 @@ export class SideMenuComponent {
   loadFileData(fileName: string): void {
     //const fileUrl = `https://archivosconcu.free.beeceptor.com/todos`; // URL de los archivos
 
-    this.http.get('https://concurrente.free.beeceptor.com/todos', { responseType: 'text' }).subscribe(
+    this.http.get('https://archivosconcu.free.beeceptor.com/todos', { responseType: 'text' }).subscribe(
   (response) => {
     try {
       const files = JSON.parse(response);
       const dialogRef = this.dialog.open(FileSelectorComponent, {
-        data: { files: files },
+        data: { files: files || [] },// Pasa la lista al componente
       });
 
       dialogRef.afterClosed().subscribe(result => {
@@ -113,7 +113,7 @@ export class SideMenuComponent {
   // Método que abre el selector de archivos
   openFileSelector(): void {
     // Hacer una solicitud GET a la URL
-    this.http.get<any[]>('https://concurrente.free.beeceptor.com/todos').subscribe(
+    this.http.get<any[]>('https://archivosconcu.free.beeceptor.com/todos').subscribe(
       (files) => {
         // Abre el modal de selección de archivo y pasa los archivos
         const dialogRef = this.dialog.open(FileSelectorComponent, {
