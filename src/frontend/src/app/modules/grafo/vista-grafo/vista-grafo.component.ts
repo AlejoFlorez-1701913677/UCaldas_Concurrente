@@ -18,37 +18,59 @@ export class VistaGrafoComponent implements OnChanges, OnInit {
   showDropdown: { [key: string]: boolean } = {};
   rowsPerPage = 10;
   currentPage = 1;
+  showData: boolean = false;
 
   filterForm: FormGroup;
 
-  constructor(private fb: FormBuilder, 
-    private http: HttpClient, 
+  constructor(private fb: FormBuilder,
+    private http: HttpClient,
     private configService: ConfigServiceService) {
     this.filterForm = this.fb.group({
-      column: [''],
-      pos_start: [0],
-      pos_end: [10],
+      CHROM: [''],
+      FILTER: [''],
+      INFO: [''],
+      FORMAT: [''],
+      LIMIT: [this.rowsPerPage],
+      OFFSET: []
     });
-   }
+  }
 
 
   ngOnInit(): void {
+    this.loadInitialData();
     this.filteredData = [...this.fileContent];
     this.updatePaginatedData();
   }
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['fileContent'] && this.fileContent) {
       this.columns = Object.keys(this.fileContent[0] || {}); // Extrae columnas dinámicas
       this.filteredData = [...this.fileContent]; // Inicializar con todos los datos
-      this.updatePaginatedData();
+      //this.updatePaginatedData();
     }
   }
+
+
+
+  loadInitialData(): void {
+    this.http.get<any[]>(`${this.configService.apiUrl}/genomeQuery/genomes`).subscribe({
+      next: (response) => {
+        this.filteredData = response;
+        this.currentPage = 1; // Reinicia la página
+        this.updatePaginatedData(); // Actualiza los datos de la tabla
+        this.showData = true;
+      },
+      error: (err) => console.error('Error al cargar los datos iniciales:', err),
+    });
+  }
+  
 
   updatePaginatedData(): void {
     const start = (this.currentPage - 1) * this.rowsPerPage;
     const end = start + this.rowsPerPage;
     this.paginatedData = this.filteredData.slice(start, end);
+    //console.log("Tamaño filtereData ", this.filteredData.length)
   }
 
   getIndex(index: number): number {
@@ -56,11 +78,17 @@ export class VistaGrafoComponent implements OnChanges, OnInit {
   }
 
   prevPage(): void {
-    if (this.currentPage > 1) this.currentPage--;
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePaginatedData(); // Actualiza la tabla después de cambiar la página
+    }
   }
-
+  
   nextPage(): void {
-    if (this.currentPage < this.totalPageCount) this.currentPage++;
+    if (this.currentPage < this.totalPageCount) {
+      this.currentPage++;
+      this.updatePaginatedData(); // Actualiza la tabla después de cambiar la página
+    }
   }
 
   get totalPageCount(): number {
@@ -69,23 +97,34 @@ export class VistaGrafoComponent implements OnChanges, OnInit {
 
   applyFilters(): void {
     const formData = this.filterForm.value;
+  
+    if (!formData.CHROM && !formData.FILTER && !formData.INFO && !formData.FORMAT) {
+      this.loadInitialData(); // Cargar todos los datos si no hay filtros
+      return;
+    }
+  
     const params: any = {
-      limit: this.rowsPerPage,
+      limit: formData.LIMIT || this.rowsPerPage,
+      offset: 0  // Reinicia el desplazamiento al aplicar filtros
     };
-
-    if (formData.column) params.chrom = formData.column;
-    if (formData.pos_start) params.pos_start = formData.pos_start;
-    if (formData.pos_end) params.pos_end = formData.pos_end;
-
+  
+    if (formData.CHROM) params.chrom = formData.CHROM;
+    if (formData.FILTER) params.filter = formData.FILTER;
+    if (formData.INFO) params.info = formData.INFO;
+    if (formData.FORMAT) params.format = formData.FORMAT;
+  
     this.http.get<any[]>(`${this.configService.apiUrl}/genomeQuery/genomes`, { params }).subscribe({
       next: (response) => {
         this.filteredData = response;
-        this.currentPage = 1;
-        this.updatePaginatedData();
+        this.paginatedData = []; // Limpia la tabla existente
+        this.currentPage = 1; // Reinicia la página
+        console.log("Respuesta filtro", response)
+        this.updatePaginatedData(); // Actualiza la tabla con los nuevos datos
       },
       error: (err) => console.error('Error al filtrar:', err),
     });
   }
+  
 
 
 
@@ -99,13 +138,13 @@ export class VistaGrafoComponent implements OnChanges, OnInit {
     this.applyFilters();
   }
 
-  
 
-  
 
-  
 
-  
+
+
+
+
 
   // Toggle para abrir/cerrar el dropdown
   toggleDropdown(column: string): void {

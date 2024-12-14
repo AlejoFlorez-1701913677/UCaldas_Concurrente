@@ -31,7 +31,7 @@ async def get_genomes(
     if chrom:
         query["CHROM"] = chrom
     if filter:
-        query["Filter"] = filter
+        query["FILTER"] = filter
     if info:
         query["INFO"] = info
     if format:

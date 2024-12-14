@@ -61,18 +61,10 @@ export class SideMenuComponent {
     }
   }
 
-  fetchFiles(limit: number, posStart?: number, posEnd?: number,): void {
-    let params: any = {
-      limit: limit
-    };
-    if (posStart !== undefined) {
-      params.pos_start = posStart;
-    }
-    if (posEnd !== undefined) {
-      params.pos_end = posEnd;
-    }
+  fetchFiles(): void {
+    
 
-    this.http.get<any[]>(`${this.configService.apiUrl}/genomeQuery/genomes`, { params }).subscribe({
+    this.http.get<any[]>(`${this.configService.apiUrl}/genomeQuery/genomes`).subscribe({
       next: (response: any[]) => {
         console.log('Archivos obtenidos', response);
         this.filesFetched.emit(response); // Emitir los archivos obtenidos

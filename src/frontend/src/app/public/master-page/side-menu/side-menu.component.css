@@ -15,4 +15,34 @@ nav {
   label:hover {
     background-color: rgba(255, 0, 0, 0.1); /* Fondo rojo suave al pasar sobre el botón */
   }
-  
+  /* Estilo para el contenedor principal del menú */
+.relative {
+  display: flex;
+  flex-direction: column; /* Ordenar los elementos en columna */
+  justify-content: space-between; /* Separar contenido y botón "Salir" */
+  height: calc(100vh - 2rem); /* Altura ajustada a la ventana */
+}
+
+/* Ajuste del botón "Salir" */
+.mt-auto {
+  margin-top: auto; /* Asegura que esté al final del contenedor flex */
+}
+
+/* Estilo para los botones */
+button, label {
+  width: 100%; /* Que ocupen todo el ancho disponible */
+  text-align: left;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Estilos al interactuar con los botones */
+button:hover, label:hover {
+  background-color: rgba(0, 0, 255, 0.1); /* Resaltar al pasar el mouse */
+  color: #0033cc; /* Cambiar color de texto */
+}
+
+/* Para el botón de salir */
+button.mt-auto:hover {
+  background-color: rgba(255, 0, 0, 0.1); /* Resaltar diferente para salir */
+  color: #cc0000;
+}
