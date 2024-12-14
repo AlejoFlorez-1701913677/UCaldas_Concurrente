@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { VistaGrafoComponent } from './vista-grafo.component';
+import { VistaGrafoComponent } from './vista-tabla.component';
 
 describe('VistaGrafoComponent', () => {
   let component: VistaGrafoComponent;

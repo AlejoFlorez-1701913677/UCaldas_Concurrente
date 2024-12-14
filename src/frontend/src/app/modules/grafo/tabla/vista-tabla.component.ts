@@ -6,8 +6,8 @@ import { ConfigServiceService } from 'src/app/services/config-service.service';
 
 @Component({
   selector: 'app-vista-grafo',
-  templateUrl: './vista-grafo.component.html',
-  styleUrls: ['./vista-grafo.component.css']
+  templateUrl: './vista-tabla.component.html',
+  styleUrls: ['./vista-tabla.component.css']
 })
 export class VistaGrafoComponent implements OnChanges, OnInit {
   @Input() fileContent: any[] = [];

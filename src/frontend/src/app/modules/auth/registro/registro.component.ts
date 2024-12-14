@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ConfigServiceService } from '../services/config-service.service';
-import { PopupService } from '../services/popup.service';
+import { ConfigServiceService } from '../../../services/config-service.service';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-registro',

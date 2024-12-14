@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { PopupComponent } from '../popup/popup.component';
+import { PopupComponent } from '../modules/popup/popup.component';
 import { Observable } from 'rxjs';
 
 @Injectable({
