@@ -83,14 +83,31 @@ export class SideMenuComponent {
 
   // Método que maneja la carga del archivo
   loadFileData(fileName: string): void {
-    const fileUrl = `https://concurrente.free.beeceptor.com/todos`; // URL de los archivos
+    //const fileUrl = `https://archivosconcu.free.beeceptor.com/todos`; // URL de los archivos
 
-    this.http.get(fileUrl).subscribe((response) => {
-      console.log(response);  // Aquí puedes manejar los datos del archivo como desees
-      alert(`Se ha cargado el archivo: ${fileName}`);  // Solo como ejemplo, muestra el nombre del archivo
-    }, (error) => {
-      console.error('Error al cargar el archivo:', error);
-    });
+    this.http.get('https://concurrente.free.beeceptor.com/todos', { responseType: 'text' }).subscribe(
+  (response) => {
+    try {
+      const files = JSON.parse(response);
+      const dialogRef = this.dialog.open(FileSelectorComponent, {
+        data: { files: files },
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.loadFileData(result);
+        }
+      });
+    } catch (err) {
+      console.error('Error al parsear JSON:', err);
+      alert('Hubo un problema al procesar los archivos. Por favor, verifica el formato.');
+    }
+  },
+  (error) => {
+    console.error('Error al obtener archivos:', error.message || error);
+    alert('Hubo un problema al obtener los archivos. Inténtalo nuevamente.');
+  }
+);
   }
 
   // Método que abre el selector de archivos
