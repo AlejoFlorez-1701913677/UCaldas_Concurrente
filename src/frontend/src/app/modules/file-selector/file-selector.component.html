@@ -1,0 +1,22 @@
+<div class="window">
+  <div class="window-header">
+    <span>Seleccionar Archivo</span>
+    <button class="close-btn" mat-dialog-close>×</button>
+  </div>
+  <div class="window-content">
+    <ul *ngIf="data.files.length > 0; else noFiles">
+      <li *ngFor="let file of data?.files">
+        <button class="file-btn" (click)="selectFile(file.name)">
+          <img src="assets/icons/file-icon.png" alt="Archivo" />
+          {{ file.name }}
+        </button>
+      </li>
+    </ul>
+    <ng-template #noFiles>
+      <p>No hay archivos disponibles.</p>
+    </ng-template>
+  </div>
+  <div class="window-footer">
+    <button mat-button mat-dialog-close>Cerrar</button>
+  </div>
+</div>

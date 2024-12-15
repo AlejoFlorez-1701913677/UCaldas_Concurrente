@@ -1,0 +1,66 @@
+<div *ngIf="showData">
+    <div class="container">
+        <div class="filters">
+            <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+                <div class="filter-row">
+                    <label for="CHROM">Chrom:</label>
+                    <select formControlName="CHROM" id="CHROM">
+                        <option value="">Seleccionar</option>
+                        <option *ngFor="let value of getUniqueValues('CHROM')" [value]="value">{{ value }}</option>
+                    </select>
+                    <label for="FILTER">Filter:</label>
+                    <select formControlName="FILTER" id="FILTER">
+                        <option value="">Seleccionar</option>
+                        <option *ngFor="let value of getUniqueValues('FILTER')" [value]="value">{{ value }}</option>
+                    </select>
+                    <label for="INFO">Info:</label>
+                    <select formControlName="INFO" id="INFO">
+                        <option value="">Seleccionar</option>
+                        <option *ngFor="let value of getUniqueValues('INFO')" [value]="value">{{ value }}</option>
+                    </select>
+                    <label for="FORMAT">Format:</label>
+                    <select formControlName="FORMAT" id="FORMAT">
+                        <option value="">Seleccionar</option>
+                        <option *ngFor="let value of getUniqueValues('FORMAT')" [value]="value">{{ value }}</option>
+                    </select>
+                    <label for="LIMIT">Limite de Registros:</label>
+                    <input type="number" formControlName="LIMIT" id="LIMIT" />
+                </div>
+                <button type="submit" class="filter-button">Filtrar</button>
+            </form>
+        </div>
+      
+        <div class="table-container">
+            <!-- Tabla -->
+            <table *ngIf="filteredData.length" class="table-auto border-collapse border border-gray-300">
+                <thead>
+                    <tr>
+                        <th *ngFor="let column of columns" class="border border-gray-300 px-4 py-2">
+                            {{ column }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of paginatedData">
+                        <td *ngFor="let column of columns" class="border border-gray-300 px-4 py-2">
+                            {{ row[column] }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div *ngIf="filteredData.length > rowsPerPage"
+                class="pagination flex items-center justify-center space-x-5">
+                <button (click)="prevPage()" [disabled]="currentPage === 1"
+                    class="flex items-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-lg">
+                    <span>Anterior</span>
+                </button>
+                <span>Página {{ currentPage }} de {{ totalPageCount }}</span>
+                <button (click)="nextPage()" [disabled]="currentPage === totalPageCount"
+                    class="flex items-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-lg">
+                    <span>Siguiente</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

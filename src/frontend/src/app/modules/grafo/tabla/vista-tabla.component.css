@@ -1,0 +1,165 @@
+th {
+  position: relative;
+}
+
+button {
+  background: none;
+  border: none;
+  font-size: 16px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  background-color: white;
+  width: 100%;
+  z-index: 10;
+}
+
+li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+li:hover {
+  background-color: #f0f0f0;
+}
+
+.bg-blue-500 {
+  background-color: #3b82f6; /* Color azul de TailwindCSS */
+  color: white; /* Asegúrate de que el texto sea visible */
+}
+
+/* Contenedor del formulario */
+.filter-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0.7rem;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor de los elementos */
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+/* Estilo para cada elemento del formulario */
+.filter-item {
+  flex: 1 1 calc(50% - 1rem); /* Dos columnas en pantallas grandes */
+  min-width: 200px; /* Asegura una mínima anchura */
+}
+
+/* Botón de filtrar */
+.filter-button {
+  display: block;
+  width: 100%; /* Que ocupe todo el ancho */
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Efecto hover en el botón */
+.filter-button:hover {
+  background-color: #0056b3;
+}
+
+/* Hacer los controles más compactos */
+.filter-container select,
+.filter-container input {
+  padding: 1px; /* Reducir padding */
+  font-size: 0.9rem; /* Disminuir tamaño de fuente */
+}
+
+.filter-container label {
+  display: block;
+  font-size: 0.85rem; /* Reducir tamaño de fuente */
+  margin-bottom: 1px;
+}
+
+.filter-container button {
+  margin-top: 8px; /* Espacio entre controles y botón */
+}
+
+.grid {
+  display: grid;
+  gap: 8px; /* Espaciado compacto */
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.filters {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ccc;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  /*justify-content: space-between;*/
+}
+
+.filter-row label {
+  margin-right: 5px;
+}
+
+.filter-row select,
+.filter-row input {
+  width: 120px;
+  height: 30px;
+}
+
+.filter-button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.filter-button:hover {
+  background-color: #0056b3;
+}
+
+.table-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+
+
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .filter-item {
+    flex: 1 1 100%; /* Una sola columna en pantallas pequeñas */
+  }
+}
+
