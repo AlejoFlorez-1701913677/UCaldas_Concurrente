@@ -17,6 +17,7 @@ from routes.user_route import routerUser
 from routes.file_routev2 import routerV2
 
 from routes.genomes_routes import routeGenome
+#from routes.file_route import routerFile
 
 from config.setting import settings
 
@@ -48,11 +49,12 @@ app.add_middleware(
 )
 
 # Registrar las rutas
-app.include_router(router, prefix="/genoma", tags=["file_upload_v1"])
-app.include_router(routerV2, prefix="/genomaV2", tags=["file_upload_v2"])
+app.include_router(router, prefix="/file", tags=["file_upload_v1"])
+app.include_router(routerV2, prefix="/fileV2", tags=["file_upload_v2"])
 
 app.include_router(routerUser, prefix="/User", tags=["user"])
 app.include_router(routeGenome, prefix="/genomeQuery", tags=["genomeQuery"])
+#app.include_router(routerFile, prefix="/files", tags=["files"])
 
 
 

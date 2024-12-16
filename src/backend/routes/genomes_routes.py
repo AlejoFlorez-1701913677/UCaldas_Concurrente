@@ -13,6 +13,7 @@ routeGenome = APIRouter()
 
 @routeGenome.get("/genomes", response_model=List[GenomeRecord])
 async def get_genomes(
+    fileName: Optional[str] = Query(None, description="Nombre del archivo"),
     chrom: Optional[str] = Query(None, description="Filtro por cromosoma"),
     #pos: Optional[int] = Query(None, description="Posición del cromosoma"),
     filter: Optional[str] = Query(None, description="Filtro por cromosoma"),
@@ -28,6 +29,8 @@ async def get_genomes(
     collection = db["genomas_vcf"]
     query = {}
 
+    if fileName:
+        query["FileName"] = fileName
     if chrom:
         query["CHROM"] = chrom
     if filter:

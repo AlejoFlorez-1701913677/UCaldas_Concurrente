@@ -18,9 +18,10 @@ CHUNK_SIZE = 10000
 
 
 class GenomeProcessorService:
-    def __init__(self, db):
+    def __init__(self, db, fileName):
         # Inicialización del cliente MongoDB con Motor (asíncrono)
         self.collection = db["genomas_vcf"]
+        self.fileName = fileName
 
     async def get_header_info(self, file_path: str) -> Tuple[List[str], Dict[str, int]]:
         """Extrae la información del encabezado del archivo VCF."""
@@ -46,6 +47,7 @@ class GenomeProcessorService:
 
         try:
             document = {
+                "FileName": self.fileName,
                 "CHROM": fields[0],
                 "POS": fields[1],
                 "ID": fields[2] if fields[2] != "." else None,
@@ -81,6 +83,7 @@ class GenomeProcessorService:
                 result = await self.collection.insert_many(operations)
                 #print(f"Insertados {result.inserted_ids} documentos")
                 print(f"Documentos Insertados.")
+                return len(result.inserted_ids)
             except Exception as e:
                 print(f"Error durante la inserción masiva: {e}")
 
@@ -89,7 +92,7 @@ class GenomeProcessorService:
         file_path: str,
         start_pos: int,
         chunk_size: int,
-        column_positions: Dict[str, int],
+        column_positions: Dict[str, int]
     ):
         """Procesa un fragmento del archivo."""
         batch = []
@@ -105,16 +108,18 @@ class GenomeProcessorService:
                         break
 
                     document = await self.process_line(line, column_positions)
-                    if document:
+                    if document is not None and document:
                         batch.append(document)
 
                     if len(batch) >= BATCH_SIZE:
-                        await self.bulk_insert_mongo(batch)
+                        inserted = await self.bulk_insert_mongo(batch)
                         batch = []
+                        return inserted
 
                 # Insertar registros restantes
                 if batch:
-                    await self.bulk_insert_mongo(batch)
+                    inserted = await self.bulk_insert_mongo(batch)
+                    return inserted
 
             except Exception as e:
                 print(f"Error procesando fragmento: {e}")
@@ -124,6 +129,7 @@ class GenomeProcessorService:
     async def create_indices(self):
         """Crea índices para mejorar el rendimiento de las consultas."""
         try:
+            await self.collection.create_index([("FileName", 1)])
             await self.collection.create_index([("CHROM", 1)])
             await self.collection.create_index([("POS", 1)])
             await self.collection.create_index([("ID", 1)])
@@ -138,61 +144,57 @@ class GenomeProcessorService:
         except Exception as e:
             print(f"Error creando índices: {e}")
 
+    async def calculate_chunk_positions(self, file_path: str):
+        """Calcula las posiciones de los fragmentos para el procesamiento en paralelo del archivo."""
+        chunk_positions = []
+        with open(file_path, "r") as file:
+            file.seek(0)  # Asegurarse de empezar desde el principio del archivo
+            while True:
+                start_position = file.tell()
+                lines = [file.readline() for _ in range(CHUNK_SIZE)]
+                if not lines[-1]:  # Si la última línea leída no existe, hemos alcanzado el final del archivo
+                    break
+                # Asegurarse de no contar líneas vacías al final del archivo
+                lines_count = len(lines) - (1 if not lines[-1].strip() else 0)
+                chunk_positions.append((start_position, lines_count))
+
+        return chunk_positions
+
     async def process_file_parallel(self, file_path: str):
-        """Función principal para procesar el archivo VCF de manera paralela."""
+        print(f"Procesando archivo process_file_parallel: {file_path}")
         start_time = time.time()
         start_datetime = datetime.now()
 
-        logging.info(f"Starting processing of {file_path}")
-        logging.info(f"Start time: {start_datetime}")
-
         # Obtener información del encabezado
         sample_columns, column_positions = await self.get_header_info(file_path)
-        logging.info(f"Found {len(sample_columns)} sample columns")
 
         # Crear índices primero
         await self.create_indices()
 
-        # Obtener las posiciones de los fragmentos a procesar
-        chunk_positions = []
-        total_lines = 0
-        with open(file_path, "r") as f:
-            while True:
-                pos = f.tell()
-                lines = [f.readline() for _ in range(CHUNK_SIZE)]
-                if not lines[-1]:
-                    break
-                total_lines += len(lines)
-                chunk_positions.append((pos, len(lines)))
-
-        logging.info(f"Total lines to process: {total_lines}")
-        logging.info(f"Number of chunks: {len(chunk_positions)}")
-
-        # Procesar los fragmentos en paralelo
+        # Procesamiento paralelo aquí
+        total_inserted = 0  # Contador para los registros insertados
+        chunk_positions = await self.calculate_chunk_positions(file_path)  # Esto debería ser un método separado
         futures = []
         for start_pos, chunk_len in chunk_positions:
-            futures.append(
-                asyncio.create_task(
-                    self.process_file_chunk(
-                        file_path, start_pos, chunk_len, column_positions
-                    )
-                )
+            future = asyncio.create_task(
+                self.process_file_chunk(file_path, start_pos, chunk_len, column_positions)
             )
+            futures.append(future)
 
-        await asyncio.gather(*futures)
+
+        results = await asyncio.gather(*futures)
+        #print(f"Resultados: {results}")
+        for result in results:
+            total_inserted += result  # Asumiendo que cada tarea retorna la cantidad de registros insertados
 
         end_time = time.time()
-        end_datetime = datetime.now()
         total_time = end_time - start_time
-
-        logging.info(f"Processing completed at: {end_datetime}")
+        logging.info(f"Processing completed at: {datetime.now()}")
+        print(f"Processing completed at: {datetime.now()}")
         logging.info(f"Total processing time: {total_time/60:.2f} minutes")
-        logging.info(
-            f"Average processing speed: {total_lines/total_time:.0f} lines/second"
-        )
-        logging.info(f"Number of processes used: {NUM_PROCESSES}")
-        logging.info(f"Chunk size: {CHUNK_SIZE}")
+        print(f"Total processing time: {total_time/60:.2f} minutes")
 
+        return total_inserted, total_time, len(chunk_positions)  # total_lines ahora es el número de chunks procesados
 
 # Ejemplo de uso
 async def main():
