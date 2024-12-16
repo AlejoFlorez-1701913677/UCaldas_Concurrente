@@ -9,23 +9,24 @@ import { FileUploadService } from './services/file-upload.service';
 })
 export class AppComponent {
   title = 'Proyecto Concurrente';
-  fileContent: any[] = []// Variable para almacenar el contenido del archivo
-  selectedFileName: string = 'No se ha seleccionado ningún archivo';
-  files: any[] = [];
-  constructor(private router: Router, private fileUploadService: FileUploadService) { }
+  fileContent: any[] = []; // Almacena el contenido del archivo seleccionado
+  selectedFileName: string = 'No se ha seleccionado ningún archivo'; // Nombre del archivo seleccionado
 
-  onFilesFetched(data: any[]): void {
-    console.log('Datos recibidos en el componente padre:', data);
-    this.fileContent = data; // Pasar los datos al grafo-component
-    //this.selectedFileName = data;
+  constructor(private router: Router, private fileUploadService: FileUploadService) {}
+
+  // Método para recibir los datos del archivo seleccionado
+  onFileSelected(data: any): void {
+    console.log('Datos recibidos del archivo:', data);
+    this.fileContent = data.content; // Contenido del archivo
+    this.selectedFileName = data.fileName; // Nombre del archivo
   }
 
+  // Métodos auxiliares
   isLoginPage(): boolean {
     return this.router.url === '/login';
   }
 
   isAuthenticated(): boolean {
-    // Simulación de autenticación: verifica si hay un token almacenado
     return !!localStorage.getItem('token');
   }
 /*

@@ -5,11 +5,11 @@ import { ConfigServiceService } from 'src/app/services/config-service.service';
 
 
 @Component({
-  selector: 'app-vista-grafo',
+  selector: 'app-vista-tabla',
   templateUrl: './vista-tabla.component.html',
   styleUrls: ['./vista-tabla.component.css']
 })
-export class VistaGrafoComponent implements OnChanges, OnInit {
+export class VistaTablaComponent implements OnChanges, OnInit {
   @Input() fileContent: any[] = [];
   filteredData: any[] = []; // Datos filtrados y paginados
   paginatedData: any[] = [];
@@ -26,6 +26,7 @@ export class VistaGrafoComponent implements OnChanges, OnInit {
     private http: HttpClient,
     private configService: ConfigServiceService) {
     this.filterForm = this.fb.group({
+      fileName: [''],
       CHROM: [''],
       FILTER: [''],
       INFO: [''],
@@ -107,7 +108,7 @@ export class VistaGrafoComponent implements OnChanges, OnInit {
       limit: formData.LIMIT || this.rowsPerPage,
       offset: 0  // Reinicia el desplazamiento al aplicar filtros
     };
-  
+    //if (formData.fileName) params.fileName = formData.fileName;
     if (formData.CHROM) params.chrom = formData.CHROM;
     if (formData.FILTER) params.filter = formData.FILTER;
     if (formData.INFO) params.info = formData.INFO;

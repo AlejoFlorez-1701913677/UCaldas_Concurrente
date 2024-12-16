@@ -8,8 +8,8 @@ import { environment } from 'src/assets/environment';
 })
 export class FileUploadService {
 
-  private uploadUrl = `${environment.apiUrl}/genoma/process_file`; // URL del backend donde se subirá el archivo
-  private uploadUrl2 = `${environment.apiUrl}/genomaV2/process_file`;
+  private uploadUrl = `${environment.apiUrl}/file/process_file`; // URL del backend donde se subirá el archivo
+  private uploadUrl2 = `${environment.apiUrl}/fileV2/process_file`;
   constructor(private http: HttpClient) { }
 
   upload(file: File): Observable<any> {

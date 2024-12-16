@@ -6,9 +6,9 @@
   <div class="window-content">
     <ul *ngIf="data.files.length > 0; else noFiles">
       <li *ngFor="let file of data?.files">
-        <button class="file-btn" (click)="selectFile(file.name)">
+        <button class="file-btn" (click)="selectFile(file.filename)">
           <img src="assets/icons/file-icon.png" alt="Archivo" />
-          {{ file.name }}
+          {{ file.filename }}
         </button>
       </li>
     </ul>
