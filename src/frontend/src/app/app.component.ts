@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { FileUploadService } from './services/file-upload.service';
 
@@ -10,14 +10,16 @@ import { FileUploadService } from './services/file-upload.service';
 export class AppComponent {
   title = 'Proyecto Concurrente';
   fileContent: any[] = []; // Almacena el contenido del archivo seleccionado
-  selectedFileName: string = 'No se ha seleccionado ningún archivo'; // Nombre del archivo seleccionado
+  //@Input() filesFetched: any[] = [];
+  selectedFileName: any; // Nombre del archivo seleccionado
 
   constructor(private router: Router, private fileUploadService: FileUploadService) {}
 
   // Método para recibir los datos del archivo seleccionado
   onFileSelected(data: any): void {
+    console.log('Se recibieron archivos?');
     console.log('Datos recibidos del archivo:', data);
-    this.fileContent = data.content; // Contenido del archivo
+    this.fileContent = data.response; // Contenido del archivo
     this.selectedFileName = data.fileName; // Nombre del archivo
   }
 
@@ -34,11 +36,12 @@ export class AppComponent {
     this.fileContent = event.content;
     this.selectedFileName = event.fileName;
   }
-
-  onFilesFetched(files: any[]): void {
-    this.files = files; // Actualizar la lista de archivos
-  }
 */
+  onFilesFetched(files: any[]): void {
+    this.fileContent = files; // Actualizar la lista de archivos
+    console.log('Archivos:', files);
+  }
+
   /*onFileLoadedName(fileName: string) {
     this.selectedFileName = fileName;
   }*/

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfigServiceService } from 'src/app/services/config-service.service';
 import { FileUploadService } from 'src/app/services/file-upload.service';
@@ -15,7 +15,8 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class SideMenuComponent {
   @Output() fileUploaded = new EventEmitter<any>();
-  @Output() filesFetched = new EventEmitter<any[]>();
+  @Output() filesFetched = new EventEmitter<any>();
+  @Input() selectedFileName: string = '';  // Recibimos el fileName
   private fileDataSubject = new BehaviorSubject<any>(null);
   fileData$ = this.fileDataSubject.asObservable();
 
@@ -72,7 +73,7 @@ export class SideMenuComponent {
     this.http.get<any[]>(`${this.configService.apiUrl}/genomeQuery/genomes`).subscribe({
       next: (response: any[]) => {
         console.log('Archivos obtenidos', response);
-        this.filesFetched.emit(response); // Emitir los archivos obtenidos
+        this.filesFetched.emit({response, fileName: ""}); // Emitir los archivos obtenidos
       },
       error: (error) => {
         console.error('Error al obtener los archivos:', error);
@@ -90,7 +91,7 @@ export class SideMenuComponent {
     this.http.get<any[]>(`${this.configService.apiUrl}/genomeQuery/genomes`, { params: payload }).subscribe(
       (response) => {
         console.log('Respuesta del backend:', response);
-        this.fileDataSubject.next(response); // Emitir datos recibidos
+        this.filesFetched.emit({ response, fileName: fileName }); // Emitir datos recibidos y el nombre del archivo
       },
       (error) => console.error('Error al cargar archivo:', error)
     );

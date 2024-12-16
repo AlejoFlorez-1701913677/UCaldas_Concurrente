@@ -1,9 +1,9 @@
 <ng-container *ngIf="isAuthenticated(); else loginPage">
   <app-header [selectedFileName]="selectedFileName"></app-header>
   <div class="flex">
-    <app-side-menu (filesFetched)="onFileSelected($event)"></app-side-menu>
+    <app-side-menu (filesFetched)="onFileSelected($event)" (selectedFileName)="selectedFileName"></app-side-menu>
     <div class="text-black flex-grow p-6 overflow-auto bg-gray-200 w-full mt-0">
-      <app-vista-tabla [fileContent]="fileContent"></app-vista-tabla>
+      <app-vista-tabla [fileContent]="fileContent" [selectedFileName]="selectedFileName"></app-vista-tabla>
     </div>
   </div>
 </ng-container>

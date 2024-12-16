@@ -11,9 +11,12 @@ import { ConfigServiceService } from 'src/app/services/config-service.service';
 })
 export class VistaTablaComponent implements OnChanges, OnInit {
   @Input() fileContent: any[] = [];
+  @Input() selectedFileName: any; // Nombre del archivo seleccionado
   filteredData: any[] = []; // Datos filtrados y paginados
   paginatedData: any[] = [];
   columns: string[] = [];
+  fileName: any;
+  name: any;
   filters: { [key: string]: string } = {};
   showDropdown: { [key: string]: boolean } = {};
   rowsPerPage = 10;
@@ -26,7 +29,6 @@ export class VistaTablaComponent implements OnChanges, OnInit {
     private http: HttpClient,
     private configService: ConfigServiceService) {
     this.filterForm = this.fb.group({
-      fileName: [''],
       CHROM: [''],
       FILTER: [''],
       INFO: [''],
@@ -36,19 +38,22 @@ export class VistaTablaComponent implements OnChanges, OnInit {
     });
   }
 
-
   ngOnInit(): void {
     this.loadInitialData();
     this.filteredData = [...this.fileContent];
+    this.fileName = this.selectedFileName;
     this.updatePaginatedData();
   }
-
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['fileContent'] && this.fileContent) {
       this.columns = Object.keys(this.fileContent[0] || {}); // Extrae columnas dinámicas
       this.filteredData = [...this.fileContent]; // Inicializar con todos los datos
       //this.updatePaginatedData();
+    }
+
+    if (changes['selectedFileName'] && this.selectedFileName) {
+      this.fileName = this.selectedFileName; // Actualiza fileName con el valor de selectedFileName
     }
   }
 
@@ -99,7 +104,8 @@ export class VistaTablaComponent implements OnChanges, OnInit {
   applyFilters(): void {
     const formData = this.filterForm.value;
   
-    if (!formData.CHROM && !formData.FILTER && !formData.INFO && !formData.FORMAT) {
+    console.log("Formulario de filtro:", formData);
+    if (!formData.CHROM && !formData.FILTER && !formData.INFO && !formData.FORMAT && !formData.LIMIT && !formData.OFFSET) {
       this.loadInitialData(); // Cargar todos los datos si no hay filtros
       return;
     }
@@ -108,44 +114,40 @@ export class VistaTablaComponent implements OnChanges, OnInit {
       limit: formData.LIMIT || this.rowsPerPage,
       offset: 0  // Reinicia el desplazamiento al aplicar filtros
     };
-    //if (formData.fileName) params.fileName = formData.fileName;
+    console.log("Aplicando filtros con los siguientes parámetros:", params);
+    console.log("selectedFileName",this.fileName)
+    if (this.fileName) params.fileName = this.fileName;
     if (formData.CHROM) params.chrom = formData.CHROM;
     if (formData.FILTER) params.filter = formData.FILTER;
     if (formData.INFO) params.info = formData.INFO;
     if (formData.FORMAT) params.format = formData.FORMAT;
+
+    console.log("params",params)
   
     this.http.get<any[]>(`${this.configService.apiUrl}/genomeQuery/genomes`, { params }).subscribe({
       next: (response) => {
+        console.log("Respuesta de filtro recibida:", response);
         this.filteredData = response;
         this.paginatedData = []; // Limpia la tabla existente
         this.currentPage = 1; // Reinicia la página
-        console.log("Respuesta filtro", response)
         this.updatePaginatedData(); // Actualiza la tabla con los nuevos datos
       },
-      error: (err) => console.error('Error al filtrar:', err),
+      error: (err) => {
+        console.error('Error al filtrar:', err);
+        this.filteredData = []; // Limpia los datos si ocurre un error
+      },
     });
   }
   
-
-
-
-
   getUniqueValues(column: string): any[] {
     return [...new Set(this.fileContent.map(row => row[column]))];
   }
 
   onFilterChange(value: string, column: string): void {
+    console.log("value",value)
     this.filters[column] = value;
     this.applyFilters();
   }
-
-
-
-
-
-
-
-
 
   // Toggle para abrir/cerrar el dropdown
   toggleDropdown(column: string): void {
