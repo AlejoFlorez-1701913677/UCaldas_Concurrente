@@ -7,7 +7,7 @@ import { RouteNotFoundComponent } from './public/errors/route-not-found/route-no
 import { ServerErrorComponent } from './public/errors/server-error/server-error.component';
 import { SideMenuComponent } from './modules/master-page/side-menu/side-menu.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { VistaGrafoComponent } from './modules/grafo/tabla/vista-tabla.component'
+import { VistaTablaComponent } from './modules/grafo/tabla/vista-tabla.component'
 import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RegistroComponent } from './modules/auth/registro/registro.component';
@@ -26,7 +26,7 @@ import { FileSelectorComponent } from './modules/file-selector/file-selector.com
     RouteNotFoundComponent,
     ServerErrorComponent,
     SideMenuComponent,
-    VistaGrafoComponent,
+    VistaTablaComponent,
     RegistroComponent,
     PopupComponent,
     FileSelectorComponent

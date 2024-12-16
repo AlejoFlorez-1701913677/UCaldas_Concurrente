@@ -5,6 +5,7 @@ import { ConfigServiceService } from 'src/app/services/config-service.service';
 import { FileUploadService } from 'src/app/services/file-upload.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FileSelectorComponent } from 'src/app/modules/file-selector/file-selector.component';
+import { BehaviorSubject } from 'rxjs';
 
 
 @Component({
@@ -15,6 +16,8 @@ import { FileSelectorComponent } from 'src/app/modules/file-selector/file-select
 export class SideMenuComponent {
   @Output() fileUploaded = new EventEmitter<any>();
   @Output() filesFetched = new EventEmitter<any[]>();
+  private fileDataSubject = new BehaviorSubject<any>(null);
+  fileData$ = this.fileDataSubject.asObservable();
 
   selectedFile = null;
 
@@ -66,8 +69,6 @@ export class SideMenuComponent {
   }
 
   fetchFiles(): void {
-    
-
     this.http.get<any[]>(`${this.configService.apiUrl}/genomeQuery/genomes`).subscribe({
       next: (response: any[]) => {
         console.log('Archivos obtenidos', response);
@@ -83,51 +84,46 @@ export class SideMenuComponent {
 
   // Método que maneja la carga del archivo
   loadFileData(fileName: string): void {
-    //const fileUrl = `https://archivosconcu.free.beeceptor.com/todos`; // URL de los archivos
+    const payload = { fileName };
+    console.log('Payload enviado:', payload);
 
-    this.http.get('https://archivosconcu.free.beeceptor.com/todos', { responseType: 'text' }).subscribe(
-  (response) => {
-    try {
-      const files = JSON.parse(response);
-      const dialogRef = this.dialog.open(FileSelectorComponent, {
-        data: { files: files || [] },// Pasa la lista al componente
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.loadFileData(result);
-        }
-      });
-    } catch (err) {
-      console.error('Error al parsear JSON:', err);
-      alert('Hubo un problema al procesar los archivos. Por favor, verifica el formato.');
-    }
-  },
-  (error) => {
-    console.error('Error al obtener archivos:', error.message || error);
-    alert('Hubo un problema al obtener los archivos. Inténtalo nuevamente.');
-  }
-);
+    this.http.get<any[]>(`${this.configService.apiUrl}/genomeQuery/genomes`, { params: payload }).subscribe(
+      (response) => {
+        console.log('Respuesta del backend:', response);
+        this.fileDataSubject.next(response); // Emitir datos recibidos
+      },
+      (error) => console.error('Error al cargar archivo:', error)
+    );
   }
 
   // Método que abre el selector de archivos
   openFileSelector(): void {
-    // Hacer una solicitud GET a la URL
-    this.http.get<any[]>('https://archivosconcu.free.beeceptor.com/todos').subscribe(
+    this.http.get<any[]>(`${this.configService.apiUrl}/file/processed_file`).subscribe(
       (files) => {
-        // Abre el modal de selección de archivo y pasa los archivos
+        // Filtrar solo los archivos con status 'processed'
+        const processedFiles = files.filter(file => file.status === 'processed');
+  
+        if (processedFiles.length === 0) {
+          alert('No hay archivos procesados disponibles.');
+          return;
+        }
+  
+        // Abre el modal y pasa solo los archivos procesados
         const dialogRef = this.dialog.open(FileSelectorComponent, {
-          data: { files: files },  // Pasa los archivos obtenidos a FileSelectorComponent
-        });
-
+          data: { files: processedFiles }, // Solo los archivos filtrados
+          
+        });console.log("Archivos procesados enviados al modal:", processedFiles);
+  
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            this.loadFileData(result); // Llama a la carga de datos del archivo seleccionado
+            this.loadFileData(result); // Pasar el nombre del archivo seleccionado
+            console.log("Filename", result)
           }
         });
       },
       (error) => {
         console.error('Error al obtener archivos:', error);
+        alert('Hubo un problema al obtener los archivos. Inténtalo nuevamente.');
       }
     );
   }

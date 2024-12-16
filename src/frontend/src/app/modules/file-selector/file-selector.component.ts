@@ -10,11 +10,13 @@ export class FileSelectorComponent {
   @Input() files: any[] = [];  // Recibe los archivos
   @Output() fileSelected = new EventEmitter<string>();
 
-  constructor(public dialogRef: MatDialogRef<FileSelectorComponent>, @Inject(MAT_DIALOG_DATA) public data: { files: any[] }) {}
+  constructor(public dialogRef: MatDialogRef<FileSelectorComponent>, 
+    @Inject(MAT_DIALOG_DATA) public data: { files: any[] }) {}
   
   selectFile(file: any): void {
-    this.fileSelected.emit(file.name); // Emite el nombre del archivo seleccionado
-    this.dialogRef.close(file.name);
+    console.log("Archivo seleccionado en el modal:", file);
+    this.fileSelected.emit(file); // Emite el nombre del archivo seleccionado
+    this.dialogRef.close(file);
   }
 
   close(): void {
