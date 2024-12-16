@@ -16,7 +16,7 @@ async def get_genomes(
     fileName: Optional[str] = Query(None, description="Nombre del archivo"),
     chrom: Optional[str] = Query(None, description="Filtro por cromosoma"),
     #pos: Optional[int] = Query(None, description="Posición del cromosoma"),
-    filter: Optional[str] = Query(None, description="Filtro por cromosoma"),
+    filter: Optional[str] = Query(None, description="Filtro por campo filter"),
     info: Optional[str] = Query(None, description="Filtro por información"),
     format: Optional[str] = Query(None, description="Filtro por formato"),
     limit: int = Query(100, description="Número máximo de registros a retornar"),
