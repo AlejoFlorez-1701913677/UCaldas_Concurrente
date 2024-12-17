@@ -16,8 +16,9 @@ import { PopupComponent } from './modules/popup/popup.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { FileSelectorComponent } from './modules/file-selector/file-selector.component';
-
-
+import { NgxUiLoaderModule } from 'ngx-ui-loader';
+import { LoaderInterceptor } from './interceptors/loader-interceptor';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -41,8 +42,14 @@ import { FileSelectorComponent } from './modules/file-selector/file-selector.com
     BrowserAnimationsModule,
     MatDialogModule,
     MatButtonModule,
+    NgxUiLoaderModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoaderInterceptor,
+      multi: true
+    }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
