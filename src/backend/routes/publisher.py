@@ -8,6 +8,7 @@ def send_registration_email(user_email: str, security_key: str):
     print("Conexión establecida")
     channel = connection.channel()
     print("Canal creado")
+    print("Security key: ", security_key)
 
     # Declarar la cola en RabbitMQ
     channel.queue_declare(queue='user_registration_queue')

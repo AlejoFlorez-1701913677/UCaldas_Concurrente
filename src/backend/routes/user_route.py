@@ -40,16 +40,18 @@ async def register_user(user: UserCreate, db: AsyncIOMotorDatabase = Depends(Dat
 
     hashed_password = get_password_hash(user.password)
     access_key = secrets.token_urlsafe(16)
+    print("Access key: ", access_key)
+    hasshed_access_key = get_password_hash(access_key)
 
     new_user = {
         "username": user.username,
         "email": user.email,
         "password": hashed_password,
-        "access_key": access_key
+        "access_key": hasshed_access_key
     }
     result = await users_collection.insert_one(new_user)
     user_id = str(result.inserted_id)
-    #send_registration_email(user.email, access_key)
+    send_registration_email(user.email, access_key)
     return UserResponse(id=user_id, username=user.username, email=user.email)
 
 @routerUser.post("/login")
@@ -64,9 +66,12 @@ async def login(login_data: LoginData, db: AsyncIOMotorDatabase = Depends(Databa
     password_correct = verify_password(login_data.password, user["password"])
     #print("Contraseña correcta" + password_correct)
     print(password_correct)
-    #access_key_correct = login_data.access_key == user["access_key"]
-    #if not password_correct or not access_key_correct:
-        #raise HTTPException(status_code=400, detail="Invalid authentication credentials")
+    access_key_correct = verify_password(login_data.access_key, user["access_key"])
+    print("a  ",login_data.access_key)
+    print("b   ", user["access_key"])
+    print(access_key_correct)
+    if not password_correct or not access_key_correct:
+        raise HTTPException(status_code=401, detail="Invalid authentication credentials")
 
     access_token_expires = timedelta(minutes=int(os.getenv("TOKEN_MINUTES", "30")))
     access_token = create_access_token(data={"sub": user["username"]}, expires_delta=access_token_expires)

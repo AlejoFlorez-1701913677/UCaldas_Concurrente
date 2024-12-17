@@ -6,7 +6,7 @@ import json
 import random
 import string
 
-def generate_security_key(length=8) -> str:
+def generate_security_key(length=15) -> str:
     """Genera una llave de seguridad aleatoria."""
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
@@ -31,6 +31,7 @@ def on_message(client, userdata, message):
 def send_email(user_email: str, security_key: str):
     """Envía un correo electrónico con la llave de seguridad."""
     print(f"Enviando correo a {user_email}")
+    print(f"Llave de seguridad: {security_key}")
     sender_email = "listanegra@consensussa.com"
     sender_password = "Huv36844"
 
@@ -58,8 +59,10 @@ def send_email(user_email: str, security_key: str):
 def callback(ch, method, properties, body):
     """Callback para procesar el mensaje recibido desde RabbitMQ."""
     message = json.loads(body)
+    print(f"Recibido: {message}")
     user_email = message["email"]
-    security_key = generate_security_key()
+    security_key = message["security_key"]
+    #generate_security_key()
 
     # Enviar el correo electrónico
     send_email(user_email, security_key)
